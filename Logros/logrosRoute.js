@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const databaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
 const util = require('util');
-const numeroVisitasLogros = require('./numeroVisitasLogros');
+const numeroVisitasLogros = require('./NumeroVisitasLogros');
 const bienvenidaLogro = require('./BienvenidaLogro');
 const divideLogrosIntoGroupos = require('./DivideLogrosIntoGroups');
 
