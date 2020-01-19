@@ -54,7 +54,7 @@ api.post('/askForLogros', async(req,res) => {
 					} 
 				}
 				if(idLugar != -1){//cuando si has encontrado un lugar
-					dataquery = dataquery.concat("; INSERT INTO VISITAS (Usuario_idUsuario, Lugar_idLugar) VALUES (?,?);");
+					dataquery = dataquery.concat("; INSERT INTO Visitas (Usuario_idUsuario, Lugar_idLugar) VALUES (?,?);");
 				}
 				console.log(dataquery);
 				connection.query(dataquery,[idUsuario,idLugar], function(err,results){
