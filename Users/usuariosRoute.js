@@ -88,8 +88,8 @@ api.post('/getUserProfile', (req,res) => {
 	console.log('gettingProfile', datetime);
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
 		var idUsuario = req.body.idUsuario
-		var sql = "UPDATE Usuario SET UltimoIngreso = ? where idUsuario = ?;SELECT * FROM Usuario where idUsuario = ?; SELECT * FROM Categorias;";
-		connection.query(sql, [datetime, idUsuario, idUsuario], function(err,results) {
+		var sql = "UPDATE Usuario SET UltimoIngreso = ? where idUsuario = ?;SELECT * FROM Usuario where idUsuario = ?; SELECT * FROM Categorias;SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?;";
+		connection.query(sql, [datetime, idUsuario, idUsuario, idUsuario], function(err,results) {
 			if (err){
 				var data = {
 					"state":"SQLError",
@@ -101,7 +101,8 @@ api.post('/getUserProfile', (req,res) => {
 					"state":"OK",
 					"userData":results[1],
 					"categorias":results[2],
-					"niveles":puntosConfig.getAllNivelsPoints()
+					"niveles":puntosConfig.getAllNivelsPoints(),
+					"lugares_visitados":results[3]
 				}
 				res.json({data});
 			}

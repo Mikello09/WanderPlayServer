@@ -4,6 +4,7 @@ const express = require('express');
 const api = express.Router();
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const util = require('util');
 const databaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
 const XLSX = require('xlsx');
@@ -14,6 +15,8 @@ const connection = mysql.createConnection({
 	password: databaseConfig.password,
 	database: databaseConfig.database
 });
+
+const query = util.promisify(connection.query).bind(connection);//para hacer las llamadas con await
 
 
 
@@ -33,8 +36,9 @@ api.post('/getAllLugares', (req,res) => {
 	}
 });
 
-api.post('/insertLugaresFromExcell', (req,res) => {
+api.post('/insertLugaresFromExcell', async(req,res) => {
 	if (proxy.isUserAuthenticated(req.headers['authtoken'])){
+		var deleteLugares = await query("DELETE FROM Lugar");
 		const excellFile = XLSX.readFile('Lugares/lugares.xlsx');
 		var lugares = XLSX.utils.sheet_to_json(excellFile.Sheets[excellFile.SheetNames[0]]);
 		console.log(lugares.length);
