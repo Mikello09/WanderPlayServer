@@ -9,6 +9,8 @@ const configLugares = require('./Lugares/lugaresConfig');
 const configLogros = require('./Logros/logrosConfig');
 const configRanking = require('./Ranking/rankingConfig');
 
+var nodeStatic = require('node-static');
+
 var listeningMask = '0.0.0.0';
 
 
@@ -27,4 +29,15 @@ appLogros.listen(configLogros.port, listeningMask, () => {
 appRanking.listen(configRanking.port, listeningMask, () => {
 	console.log(`ranking listening in http:://${listeningMask}:${configRanking.port}`)
 });
+
+var file = new nodeStatic.Server('./Resources/Categorias');
+
+require('http').createServer(function (request, response) {
+    request.addListener('end', function () {
+        //
+        // Serve files!
+        //
+        file.serve(request, response);
+    }).resume();
+}).listen(8080);
 
