@@ -7,9 +7,8 @@ const bodyParser = require('body-parser');
 const databaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
 const util = require('util');
-const numeroVisitasLogros = require('./NumeroVisitasLogros');
-const bienvenidaLogro = require('./BienvenidaLogro');
-const divideLogrosIntoGroupos = require('./DivideLogrosIntoGroups');
+const getAllLogrosHelper = require('./Helpers/GetAllLogrosHelper');
+const askForLogrosHelper = require('./Helpers/AskForLogrosHelper');
 
 const connection = mysql.createConnection({
 	host: databaseConfig.host,
@@ -24,100 +23,63 @@ api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las re
 
 const query = util.promisify(connection.query).bind(connection);
 
+
 api.post('/askForLogros', async(req,res) => {
+	console.log("Asking for logros...")
 	var idUsuario = req.body.idUsuario;
 	var idLugar = req.body.idLugar;
-	var logros = [];
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
 		try{
-			const lugares = await query("SELECT * FROM Lugar WHERE idLugar = ?", idLugar);
+			const lugar = await query("SELECT * FROM Lugar WHERE idLugar = ?", idLugar);
 			const visitas = await query("SELECT * FROM Visitas WHERE Usuario_idUsuario = ?", idUsuario);
 			const logrosUsuario = await query("SELECT * FROM LogrosUsuarios WHERE Usuario_idUsuario = ?", idUsuario);
-			var logrosB = bienvenidaLogro.isFirstTimeInTheApp(logrosUsuario);
-			console.log(logrosB);
-			var logrosLV = numeroVisitasLogros.getVisitasLogros(lugares,visitas);
-			console.log(logrosLV);
-			logros = numeroVisitasLogros.addLogrosToken([logrosLV,logrosB]);
-			console.log(logros);
-			if(logros.length > 0){//aqui en vez de ir al fail se va al catch
-				console.log('1');
-				var dataquery = "SELECT * FROM Logros WHERE ";
-				for(var i=0;i<logros.length;i++){
-					if(i==0){
-						for(var j=0;j<logros[i].length;j++){
-							if(j==0){
-								dataquery = dataquery.concat("LogroToken = '" + logros[i][j] + "' ");
-							} else {
-								dataquery = dataquery.concat("OR LogroToken = '" + logros[i][j] + "' ");
-							}
-						}
-					} 
-				}
-				if(idLugar != -1){//cuando si has encontrado un lugar
-					dataquery = dataquery.concat("; INSERT INTO Visitas (Usuario_idUsuario, Lugar_idLugar) VALUES (?,?);");
-				}
-				console.log(dataquery);
-				connection.query(dataquery,[idUsuario,idLugar], function(err,results){
-					if (err){
-						var data = {
-							"state":"SQLError",
-							"reason":err
-						};
-						res.json({data});
-					} else {
-						var data = {}
-						var puntos = 0
-						var monedas = 0
-						var diamantes = 0
-						var logrosUsuariosQuery = "INSERT INTO LogrosUsuarios (Usuario_idUsuario, Logros_idLogros) VALUES";
-						if(results[0].length > 0){//si hay mas de un logro
-							for(var i=0;i<results[0].length;i++){
-								console.log('puntos1: ' + results[0][i].Puntos)
-								puntos = puntos + results[0][i].Puntos
-								monedas = monedas + results[0][i].Monedas
-								diamantes = diamantes + results[0][i].Diamantes
-								if(i==0){
-									logrosUsuariosQuery = logrosUsuariosQuery.concat("(" + idUsuario + "," + results[0][i].idLogros + ")");
-								} else {
-									logrosUsuariosQuery = logrosUsuariosQuery.concat(", (" + idUsuario + "," + results[0][i].idLogros + ")");
-								}
-							}
-							data = {
-								"state":"OK",
-								"data":results[0]
-							};
-							console.log(results[0])
-						} else {//si solo hay un logro
-							console.log('puntos2: ' + results[0].Puntos)
-							puntos = puntos + results[0].Puntos
-							monedas = monedas + results[0].Monedas
-							diamantes = diamantes + results[0].Diamantes
-							logrosUsuariosQuery = logrosUsuariosQuery.concat("(" + idUsuario + "," + results[0].idLogros + ")")
-							data = {
-								"state":"OK",
-								"data":results
-							};
-							console.log(results[0])
-						}
-						console.log(logrosUsuariosQuery)
-						console.log(monedas);
-						console.log(puntos);
-						console.log(diamantes)
-						var updateUsuarioQuery = "UPDATE Usuario SET Puntos = Puntos + ? , Monedas = Monedas + ? , Diamantes = Diamantes + ? WHERE idUsuario = ?";
-						query(logrosUsuariosQuery); 
-						const updateUsuario = query(updateUsuarioQuery,[puntos,monedas,diamantes,idUsuario]);
-						res.json({data});
+			
+			if (idLugar == -1) {//bienvenida
+				const logroBienvenida = askForLogrosHelper.isFirstTimeInTheApp(logrosUsuario);
+				if (logroBienvenida.length > 0){
+					console.log("Binevenido!!!");
+					const logros = await askForLogrosHelper.InsertNewLogro(['LB'],idUsuario);
+					console.log('Logros obtenidos: ', logros);
+					askForLogrosHelper.updatePremios(logros,idUsuario);
+					var data = {
+						"state":"OK",
+						"data":logros
 					}
-				});
+					res.json({data})
+				} else {
+					console.log('No se han obtenido logros para ',idLugar);
+					var data = {
+						"state":"Fail"
+					};
+					res.json({data});
+				}
+			} else if(idLugar == -2){//cambio de nivel
 
-			} else {
-				console.log('fail');
-				var data = {
-					"state":"Fail"
-				};
-				res.json({data});
+			} else {//lugar visitado
+				const logrosLugares = askForLogrosHelper.lugarLogros(lugar,visitas,idUsuario);
+				if (logrosLugares.length > 0) {
+					console.log("Logros obtenidos!", logrosLugares);
+					askForLogrosHelper.InsertNewVisita(lugar,idUsuario);
+					const logros = await askForLogrosHelper.InsertNewLogro(logrosLugares,idUsuario);
+					console.log("Logros obtenidos: ", logros);
+					askForLogrosHelper.updatePremios(logros,idUsuario);
+					var data = {
+						"state":"OK",
+						"data":logros
+					}
+					res.json({data})
+				} else {
+					console.log('No se han obtenido logros para ',idLugar);
+					var data = {
+						"state":"Fail"
+					};
+					res.json({data});
+				}
 			}
-		}catch (err){
+
+
+		} catch(err){
+			console.log(err);
 			var data = {
 				"state":"SQLError",
 				"reason":err
@@ -129,42 +91,39 @@ api.post('/askForLogros', async(req,res) => {
 	}
 });
 
-api.post('/getLogrosById', (req,res) => {
+api.post('/getAllLogros', async(req,res) => {
 	var idUsuario = req.body.idUsuario;
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
-		connection.query("SELECT Logros.* FROM Logros JOIN LogrosUsuarios ON Logros.idLogros = LogrosUsuarios.Logros_idLogros where LogrosUsuarios.Usuario_idUsuario = ?",[idUsuario],function(err,result){
-			if(err){
-				var data = {
-					"state":"SQLError",
-					"reason":err
-				};
-				res.json({data});
-			} else {
-				var data = {
-					"state":"OK",
-					"data":result
-				};
-				res.json({data});
-			}
-		});
-	} else {
-		res.json({"state":"Unauthorized"});
-	}
-});
+		try{
+			const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
+			const logros = await query("SELECT * FROM Logros");
+			const logrosUsuario = await query("SELECT Logros.* FROM Logros JOIN LogrosUsuarios ON Logros.idLogros = LogrosUsuarios.Logros_idLogros WHERE LogrosUsuarios.Usuario_idUsuario = ?", [idUsuario]);
 
-api.post('/getAllLogros', (req,res) => {
-	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
-		connection.query("SELECT * FROM Logros", function(err,result){
-			if(err){
-				var data = {
-					"state":"SQLError",
-					"reason":err
+			var logrosConPorcentaje = []
+			for(var i=0;i<logros.length;i++){
+				const porcentaje = getAllLogrosHelper.calculatePercent(logros[i],lugaresVisitados,logrosUsuario);
+				var logroConPorcentaje = {
+					"idLogros": logros[i].idLogros,
+					"Titulo": logros[i].Titulo,
+					"Descripcion": logros[i].Descripcion,
+					"Imagen": logros[i].Imagen,
+					"Puntos": logros[i].Puntos,
+					"Monedas": logros[i].Monedas,
+					"LogroToken": logros[i].LogroToken,
+					"Diamantes": logros[i].Diamantes,
+					"Grupo": logros[i].Grupo,
+					"Porcentaje": porcentaje
 				};
-				res.json({data});
-			} else {
-				res.json(divideLogrosIntoGroupos.divideIntoGroups(result));
+				logrosConPorcentaje.push(logroConPorcentaje);
 			}
-		});
+			res.json(getAllLogrosHelper.divideIntoGroups(logrosConPorcentaje));
+		}catch(err){
+			var data = {
+				"state":"SQLError",
+				"reason":err
+			};
+			res.json({data});
+		}
 	} else {
 		res.json({"state":"Unauthorized"});
 	}

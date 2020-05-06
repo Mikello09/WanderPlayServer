@@ -58,13 +58,14 @@ api.post('/registerUsuario', (req,res) => {
 	console.log('Registering user');
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
 		var nombre = req.body.nombre;
-		var email = req.body.email;
+		var avatar = req.body.avatar;
 		var contrasena = req.body.contrasena;
-		if(nombre == null || contrasena == null || email == null){
+		if(nombre == null || contrasena == null || avatar == null){
+			console.log('Valores nulos');
 			throw err;
 		} else {
-			var sql = "INSERT INTO Usuario (Nombre, Email, Contrasena, Puntos, Monedas) VALUES (?, ?, ?, ?, ?)";
-			connection.query(sql, [nombre, email, contrasena,0,0] ,function (err, result) {
+			var sql = "INSERT INTO Usuario (Nombre, Avatar, Contrasena, Puntos, Monedas) VALUES (?, ?, ?, ?, ?)";
+			connection.query(sql, [nombre, avatar, contrasena,0,0] ,function (err, result) {
 				if (err){
 					var data = {
 						"state":"SQLError",
