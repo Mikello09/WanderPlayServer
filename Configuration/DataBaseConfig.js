@@ -1,6 +1,6 @@
 module.exports = {
-	host: 'localhost',//wanderplaydev.cfebmmc7xweo.eu-west-3.rds.amazonaws.com
+	host: 'wanderplaydev.cfebmmc7xweo.eu-west-3.rds.amazonaws.com',//localhost
 	user: 'mikel',
-	password: 'mikel',//Wanderplay2020
-	database: 'WanderPlayDev'//WanderPlay
+	password: 'Wanderplay2020',//mikel
+	database: 'WanderPlay'//WanderPlayDev
 }
