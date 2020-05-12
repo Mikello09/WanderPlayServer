@@ -42,6 +42,7 @@ api.post('/insertLugaresFromExcell', async(req,res) => {
 		const excellFile = XLSX.readFile('Lugares/lugares.xlsx');
 		var lugares = XLSX.utils.sheet_to_json(excellFile.Sheets[excellFile.SheetNames[0]]);
 		console.log(lugares.length);
+		var nivelData = []
 		for (var i = 0; i< lugares.length; i++){
 			let nombre = lugares[i]['Nombre'];
 			let latitud = lugares[i]['Latitud'];
@@ -57,6 +58,7 @@ api.post('/insertLugaresFromExcell', async(req,res) => {
 			let foto2 = lugares[i]['URL_Foto_2'];
 			let foto3 = lugares[i]['URL_Foto_3'];
 			let nivel = lugares[i]['Interes']
+			nivelData.push(nivel)
 			let sql = "INSERT INTO Lugar (Nombre, Latitud, Longitud, Descripcion, Puntos, Categoria, Provincia, CCAA, Foto1, Foto2, Foto3, Localidad, Interes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			connection.query(sql, [nombre, latitud, longitud, description, puntos, categoria, provincia, ccaa, foto1, foto2, foto3, localidad, nivel] ,function(err, result){	
 				if(err){
@@ -66,7 +68,7 @@ api.post('/insertLugaresFromExcell', async(req,res) => {
 				}
 			});
 		}
-		res.send('Success')
+		res.json({'success': nivelData});
 	} else {
 		res.send('Unauthorized');
 	}
