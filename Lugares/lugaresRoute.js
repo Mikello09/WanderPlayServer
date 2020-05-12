@@ -56,8 +56,9 @@ api.post('/insertLugaresFromExcell', async(req,res) => {
 			let foto1 = lugares[i]['URL_Foto_1'];
 			let foto2 = lugares[i]['URL_Foto_2'];
 			let foto3 = lugares[i]['URL_Foto_3'];
-			let sql = "INSERT INTO Lugar (Nombre, Latitud, Longitud, Descripcion, Puntos, Categoria, Provincia, CCAA, Foto1, Foto2, Foto3, Localidad) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			connection.query(sql, [nombre, latitud, longitud, description, puntos, categoria, provincia, ccaa, foto1, foto2, foto3, localidad] ,function(err, result){	
+			let nivel = lugares[i]['Interes']
+			let sql = "INSERT INTO Lugar (Nombre, Latitud, Longitud, Descripcion, Puntos, Categoria, Provincia, CCAA, Foto1, Foto2, Foto3, Localidad, Interes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			connection.query(sql, [nombre, latitud, longitud, description, puntos, categoria, provincia, ccaa, foto1, foto2, foto3, localidad, nivel] ,function(err, result){	
 				if(err){
 					throw err;
 				} else {
