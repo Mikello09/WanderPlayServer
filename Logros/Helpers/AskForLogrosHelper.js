@@ -4,6 +4,7 @@ const databaseConfig = require('../../Configuration/DataBaseConfig');
 const util = require('util');
 const lugaresHelper = require('./LugaresHelper');
 const categoriasHelper = require('./CategoriasHelper');
+const ccaaHelper = require('./CCAAHelper');
 
 
 const connection = mysql.createConnection({
@@ -34,18 +35,24 @@ lugarLogros = function(lugar,visitas,idUsuario){
     for(var i=0;i<visitas.length;i++){
         if (visitas[i].Lugar_idLugar == lugar.idLugar){isNew = false}
     }
-    if(isNew || visitas.length == 0){logrosLugar.push('LV')}
-    
-    /*LUGARES*/
-    const lugaresLogros = lugaresHelper.getLugaresLogros(visitas);
-    for(var i=0;i<lugaresLogros.length;i++){
-        logrosLugar.push(lugaresLogros[i]);
+    if(isNew){
+        logrosLugar.push('LV')
+
+        /*LUGARES*/
+        const lugaresLogros = lugaresHelper.getLugaresLogros(visitas);
+        for(var i=0;i<lugaresLogros.length;i++){
+            logrosLugar.push(lugaresLogros[i]);
+        }
+
+        /*CATEGORIAS*/
+        const categoriasLogros = categoriasHelper.getCategoriasLogros(idUsuario, lugar);
+        if (categoriasLogros.length > 0){logrosLugar.push(categoriasLogros[0])}
+
+        /*CCAA*/
+        const ccaaLogros = ccaaHelper.getCCAALogros(idUsuario, lugar);
+        if (ccaaLogros.length > 0){logrosLugar.push(ccaaLogros[0])}
+        
     }
-
-    /*CATEGORIAS*/
-    const categoriasLogros = categoriasHelper.getCategoriasLogros(idUsuario, lugar);
-    if (categoriasLogros.length > 0){logrosLugar.push(categoriasLogros[0])}
-
     return logrosLugar;
 
 }

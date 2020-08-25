@@ -49,6 +49,12 @@ ID
     50PAV -> 50 Parques
     100PAV -> 100 Parques
 
+    5PL -> 5 Playas
+    10PL -> 10 Playas
+    25PL -> 25 Playas
+    50PL -> 50 Playas
+    100PL -> 100 Playas
+
 */
 
 const mysql = require('mysql');
@@ -130,6 +136,14 @@ const parques = [
     '100PAV'
 ]
 
+const playas = [
+    '5PL',
+    '10PL',
+    '25PL',
+    '50PL',
+    '100PL'
+]
+
 module.exports.getCategoriasLogros = getCategoriasLogros;
 async function getCategoriasLogros(idUsuario,lugar){
     var logrosCategorias = []
@@ -165,6 +179,10 @@ async function getCategoriasLogros(idUsuario,lugar){
         case "Parques":
             const parques = await getParques(idUsuario);
             if (parques.length > 0){logrosCategorias.push(parques[0])}
+            break;
+        case "Playas":
+            const playas = await getPlayas(idUsuario);
+            if (playas.length > 0){logrosCategorias.push(playas[0])}
             break;
         default:
             break;
@@ -399,6 +417,34 @@ async function getParques(idUsuario){
             logros.push(parques[4]);
         default:
             console.log('No hay logro de parques');
+    }
+    return logros;
+}
+
+async function getPlayas(idUsuario){
+
+    //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
+    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
+
+    var visitasPlayas = 0
+    for(var i=0;i<lugaresVisitados.length;i++){
+        if(lugaresVisitados[i].Categoria == "Playas"){visitasPlayas = visitasPlayas + 1}
+    }
+
+    var logros = []
+    switch(visitasPlayas){
+        case 4:
+            logros.push(playas[0]);
+        case 9:
+            logros.push(playas[1]);
+        case 24:
+            logros.push(playas[2]);
+        case 49:
+            logros.push(playas[3]);
+        case 99:
+            logros.push(playas[4]);
+        default:
+            console.log('No hay logro de playas');
     }
     return logros;
 }

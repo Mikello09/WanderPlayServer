@@ -43,6 +43,12 @@ class RankingClass{
     get lugaresVisitados(){
         return this._lugaresVisitados;
     }
+    set avatar(avatar){
+        this._avatar = avatar;
+    }
+    get avatar(){
+        return this._avatar;
+    }
 }
 
 api.use(bodyParser.urlencoded({extended:false}))//necesario para parsear las respuestas en el body
@@ -61,6 +67,7 @@ api.post('/getGeneralRanking', async(req,res) => {
                 rank.idUsuario = usuarios[i].idUsuario;
                 rank.nombre = usuarios[i].Nombre;
                 rank.puntos = usuarios[i].Puntos;
+                rank.avatar = usuarios[i].Avatar;
                 var lugaresVisitados = await query("SELECT * FROM Visitas WHERE Usuario_idUsuario = ?;", usuarios[i].idUsuario);
                 rank.lugaresVisitados = lugaresVisitados.length
                 rankings.push(rank)

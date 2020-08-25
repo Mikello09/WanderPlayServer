@@ -321,11 +321,551 @@ calculatePercent = function(logro, lugaresVisitados,logrosUsuario){
                         if(lugaresVisitados[i].Categoria == "Parques"){visitasParques = visitasParques + 1}
                     }
                     return (visitasParques/100)*100
+                case "5PL":
+                    var visitasPlayas = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].Categoria == "Playas"){visitasPlayas = visitasPlayas + 1}
+                    }
+                    return (visitasPlayas/5)*100
+                case "10PL":
+                    var visitasPlayas = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].Categoria == "Playas"){visitasPlayas = visitasPlayas + 1}
+                    }
+                    return (visitasPlayas/10)*100
+                case "25PL":
+                    var visitasPlayas = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].Categoria == "Playas"){visitasPlayas = visitasPlayas + 1}
+                    }
+                    return (visitasPlayas/25)*100
+                case "50PL":
+                    var visitasPlayas = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].Categoria == "Playas"){visitasPlayas = visitasPlayas + 1}
+                    }
+                    return (visitasPlayas/50)*100
+                case "100PL":
+                    var visitasPlayas = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].Categoria == "Playas"){visitasPlayas = visitasPlayas + 1}
+                    }
+                    return (visitasPlayas/100)*100
                 default:
                     return 0
                 
             }
-        } else {
+        } else if (logro.Grupo == "CCAA"){
+            switch(logro.LogroToken){
+                case "5GA":
+                    var visitasGalicia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Galicia"){visitasGalicia = visitasGalicia + 1}
+                    }
+                    return (visitasGalicia/5)*100
+                case "10GA":
+                    var visitasGalicia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Galicia"){visitasGalicia = visitasGalicia + 1}
+                    }
+                    return (visitasGalicia/10)*100
+                case "25GA":
+                    var visitasGalicia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Galicia"){visitasGalicia = visitasGalicia + 1}
+                    }
+                    return (visitasGalicia/25)*100
+                case "50GA":
+                    var visitasGalicia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Galicia"){visitasGalicia = visitasGalicia + 1}
+                    }
+                    return (visitasGalicia/50)*100
+                case "100GA":
+                    var visitasGalicia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Galicia"){visitasGalicia = visitasGalicia + 1}
+                    }
+                    return (visitasGalicia/100)*100
+                case "5AS":
+                    var visitasAsturias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Asturias"){visitasAsturias = visitasAsturias + 1}
+                    }
+                    return (visitasAsturias/5)*100
+                case "10AS":
+                    var visitasAsturias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Asturias"){visitasAsturias = visitasAsturias + 1}
+                    }
+                    return (visitasAsturias/10)*100
+                case "25AS":
+                    var visitasAsturias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Asturias"){visitasAsturias = visitasAsturias + 1}
+                    }
+                    return (visitasAsturias/25)*100
+                case "50AS":
+                    var visitasAsturias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Asturias"){visitasAsturias = visitasAsturias + 1}
+                    }
+                    return (visitasAsturias/50)*100
+                case "100AS":
+                    var visitasAsturias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Asturias"){visitasAsturias = visitasAsturias + 1}
+                    }
+                    return (visitasAsturias/100)*100
+                case "5CA":
+                    var visitasCantabria = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cantabria"){visitasCantabria = visitasCantabria + 1}
+                    }
+                    return (visitasCantabria/5)*100
+                case "10CA":
+                    var visitasCantabria = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cantabria"){visitasCantabria = visitasCantabria + 1}
+                    }
+                    return (visitasCantabria/10)*100
+                case "25CA":
+                    var visitasCantabria = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cantabria"){visitasCantabria = visitasCantabria + 1}
+                    }
+                    return (visitasCantabria/25)*100
+                case "50CA":
+                    var visitasCantabria = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cantabria"){visitasCantabria = visitasCantabria + 1}
+                    }
+                    return (visitasCantabria/50)*100
+                case "100CA":
+                    var visitasCantabria = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cantabria"){visitasCantabria = visitasCantabria + 1}
+                    }
+                    return (visitasCantabria/100)*100
+                case "5EU":
+                    var visitasPaisVasco = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Pais Vasco"){visitasPaisVasco = visitasPaisVasco + 1}
+                    }
+                    return (visitasPaisVasco/5)*100
+                case "10EU":
+                    var visitasPaisVasco = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Pais Vasco"){visitasPaisVasco = visitasPaisVasco + 1}
+                    }
+                    return (visitasPaisVasco/10)*100
+                case "25EU":
+                    var visitasPaisVasco = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Pais Vasco"){visitasPaisVasco = visitasPaisVasco + 1}
+                    }
+                    return (visitasPaisVasco/25)*100
+                case "50EU":
+                    var visitasPaisVasco = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Pais Vasco"){visitasPaisVasco = visitasPaisVasco + 1}
+                    }
+                    return (visitasPaisVasco/50)*100
+                case "100EU":
+                    var visitasPaisVasco = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Pais Vasco"){visitasPaisVasco = visitasPaisVasco + 1}
+                    }
+                    return (visitasPaisVasco/100)*100
+                case "5NA":
+                    var visitasNavarra = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Navarra"){visitasNavarra = visitasNavarra + 1}
+                    }
+                    return (visitasNavarra/5)*100
+                case "10NA":
+                    var visitasNavarra = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Navarra"){visitasNavarra = visitasNavarra + 1}
+                    }
+                    return (visitasNavarra/10)*100
+                case "25NA":
+                    var visitasNavarra = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Navarra"){visitasNavarra = visitasNavarra + 1}
+                    }
+                    return (visitasNavarra/25)*100
+                case "50NA":
+                    var visitasNavarra = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Navarra"){visitasNavarra = visitasNavarra + 1}
+                    }
+                    return (visitasNavarra/50)*100
+                case "100NA":
+                    var visitasNavarra = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Navarra"){visitasNavarra = visitasNavarra + 1}
+                    }
+                    return (visitasNavarra/100)*100
+                case "5LR":
+                    var visitasLaRioja = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "La Rioja"){visitasLaRioja = visitasLaRioja + 1}
+                    }
+                    return (visitasLaRioja/5)*100
+                case "10LR":
+                    var visitasLaRioja = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "La Rioja"){visitasLaRioja = visitasLaRioja + 1}
+                    }
+                    return (visitasLaRioja/10)*100
+                case "25LR":
+                    var visitasLaRioja = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "La Rioja"){visitasLaRioja = visitasLaRioja + 1}
+                    }
+                    return (visitasLaRioja/25)*100
+                case "50LR":
+                    var visitasLaRioja = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "La Rioja"){visitasLaRioja = visitasLaRioja + 1}
+                    }
+                    return (visitasLaRioja/50)*100
+                case "100LR":
+                    var visitasLaRioja = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "La Rioja"){visitasLaRioja = visitasLaRioja + 1}
+                    }
+                    return (visitasLaRioja/100)*100
+                case "5AR":
+                    var visitasAragon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Aragon"){visitasAragon = visitasAragon + 1}
+                    }
+                    return (visitasAragon/5)*100
+                case "10AR":
+                    var visitasAragon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Aragon"){visitasAragon = visitasAragon + 1}
+                    }
+                    return (visitasAragon/10)*100
+                case "25AR":
+                    var visitasAragon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Aragon"){visitasAragon = visitasAragon + 1}
+                    }
+                    return (visitasAragon/25)*100
+                case "50AR":
+                    var visitasAragon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Aragon"){visitasAragon = visitasAragon + 1}
+                    }
+                    return (visitasAragon/50)*100
+                case "100AR":
+                    var visitasAragon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Aragon"){visitasAragon = visitasAragon + 1}
+                    }
+                    return (visitasAragon/100)*100
+                case "5CAT":
+                    var visitasCataluna = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cataluna"){visitasCataluna = visitasCataluna + 1}
+                    }
+                    return (visitasCataluna/5)*100
+                case "10CAT":
+                    var visitasCataluna = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cataluna"){visitasCataluna = visitasCataluna + 1}
+                    }
+                    return (visitasCataluna/10)*100
+                case "25CAT":
+                    var visitasCataluna = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cataluna"){visitasCataluna = visitasCataluna + 1}
+                    }
+                    return (visitasCataluna/25)*100
+                case "50CAT":
+                    var visitasCataluna = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cataluna"){visitasCataluna = visitasCataluna + 1}
+                    }
+                    return (visitasCataluna/50)*100
+                case "100CAT":
+                    var visitasCataluna = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Cataluna"){visitasCataluna = visitasCataluna + 1}
+                    }
+                    return (visitasCataluna/100)*100
+                case "5CYL":
+                    var visitasCastillaLeon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Castilla y Leon"){visitasCastillaLeon = visitasCastillaLeon + 1}
+                    }
+                    return (visitasCastillaLeon/5)*100
+                case "10CYL":
+                    var visitasCastillaLeon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Castilla y Leon"){visitasCastillaLeon = visitasCastillaLeon + 1}
+                    }
+                    return (visitasCastillaLeon/10)*100
+                case "25CYL":
+                    var visitasCastillaLeon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Castilla y Leon"){visitasCastillaLeon = visitasCastillaLeon + 1}
+                    }
+                    return (visitasCastillaLeon/25)*100
+                case "50CYL":
+                    var visitasCastillaLeon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Castilla y Leon"){visitasCastillaLeon = visitasCastillaLeon + 1}
+                    }
+                    return (visitasCastillaLeon/50)*100
+                case "100CYL":
+                    var visitasCastillaLeon = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Castilla y Leon"){visitasCastillaLeon = visitasCastillaLeon + 1}
+                    }
+                    return (visitasCastillaLeon/100)*100
+                case "5MA":
+                    var visitasMadrid = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Madrid"){visitasMadrid = visitasMadrid + 1}
+                    }
+                    return (visitasMadrid/5)*100
+                case "10MA":
+                    var visitasMadrid = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Madrid"){visitasMadrid = visitasMadrid + 1}
+                    }
+                    return (visitasMadrid/10)*100
+                case "25MA":
+                    var visitasMadrid = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Madrid"){visitasMadrid = visitasMadrid + 1}
+                    }
+                    return (visitasMadrid/25)*100
+                case "50MA":
+                    var visitasMadrid = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Madrid"){visitasMadrid = visitasMadrid + 1}
+                    }
+                    return (visitasMadrid/50)*100
+                case "100MA":
+                    var visitasMadrid = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Madrid"){visitasMadrid = visitasMadrid + 1}
+                    }
+                    return (visitasMadrid/100)*100
+                case "5VA":
+                    var visitasValencia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Valencia"){visitasValencia = visitasValencia + 1}
+                    }
+                    return (visitasValencia/5)*100
+                case "10VA":
+                    var visitasValencia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Valencia"){visitasValencia = visitasValencia + 1}
+                    }
+                    return (visitasValencia/10)*100
+                case "25VA":
+                    var visitasValencia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Valencia"){visitasValencia = visitasValencia + 1}
+                    }
+                    return (visitasValencia/25)*100
+                case "50VA":
+                    var visitasValencia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Valencia"){visitasValencia = visitasValencia + 1}
+                    }
+                    return (visitasValencia/50)*100
+                case "100VA":
+                    var visitasValencia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Valencia"){visitasValencia = visitasValencia + 1}
+                    }
+                    return (visitasValencia/100)*100
+                case "5EX":
+                    var visitasExtremadura = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Extremadura"){visitasExtremadura = visitasExtremadura + 1}
+                    }
+                    return (visitasExtremadura/5)*100
+                case "10EX":
+                    var visitasExtremadura = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Extremadura"){visitasExtremadura = visitasExtremadura + 1}
+                    }
+                    return (visitasExtremadura/10)*100
+                case "25EX":
+                    var visitasExtremadura = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Extremadura"){visitasExtremadura = visitasExtremadura + 1}
+                    }
+                    return (visitasExtremadura/25)*100
+                case "50EX":
+                    var visitasExtremadura = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Extremadura"){visitasExtremadura = visitasExtremadura + 1}
+                    }
+                    return (visitasExtremadura/50)*100
+                case "100EX":
+                    var visitasExtremadura = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Extremadura"){visitasExtremadura = visitasExtremadura + 1}
+                    }
+                    return (visitasExtremadura/100)*100
+                case "5CYLA":
+                    var visitasCastillaLaMancha = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Castilla La Mancha"){visitasCastillaLaMancha = visitasCastillaLaMancha + 1}
+                    }
+                    return (visitasCastillaLaMancha/5)*100
+                case "10CYLA":
+                    var visitasCastillaLaMancha = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Castilla La Mancha"){visitasCastillaLaMancha = visitasCastillaLaMancha + 1}
+                    }
+                    return (visitasCastillaLaMancha/10)*100
+                case "25CYLA":
+                    var visitasCastillaLaMancha = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Castilla La Mancha"){visitasCastillaLaMancha = visitasCastillaLaMancha + 1}
+                    }
+                    return (visitasCastillaLaMancha/25)*100
+                case "100CYLA":
+                    var visitasCastillaLaMancha = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Castilla La Mancha"){visitasCastillaLaMancha = visitasCastillaLaMancha + 1}
+                    }
+                    return (visitasCastillaLaMancha/100)*100
+                case "5MU":
+                    var visitasMurcia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Murcia"){visitasMurcia = visitasMurcia + 1}
+                    }
+                    return (visitasMurcia/5)*100
+                case "10MU":
+                    var visitasMurcia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Murcia"){visitasMurcia = visitasMurcia + 1}
+                    }
+                    return (visitasMurcia/10)*100
+                case "25MU":
+                    var visitasMurcia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Murcia"){visitasMurcia = visitasMurcia + 1}
+                    }
+                    return (visitasMurcia/25)*100
+                case "50MU":
+                    var visitasMurcia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Murcia"){visitasMurcia = visitasMurcia + 1}
+                    }
+                    return (visitasMurcia/50)*100
+                case "100MU":
+                    var visitasMurcia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Murcia"){visitasMurcia = visitasMurcia + 1}
+                    }
+                    return (visitasMurcia/100)*100
+                case "5AN":
+                    var visitasAndalucia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Andalucia"){visitasAndalucia = visitasAndalucia + 1}
+                    }
+                    return (visitasAndalucia/5)*100
+                case "10AN":
+                    var visitasAndalucia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Andalucia"){visitasAndalucia = visitasAndalucia + 1}
+                    }
+                    return (visitasAndalucia/10)*100
+                case "25AN":
+                    var visitasAndalucia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Andalucia"){visitasAndalucia = visitasAndalucia + 1}
+                    }
+                    return (visitasAndalucia/25)*100
+                case "50AN":
+                    var visitasAndalucia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Andalucia"){visitasAndalucia = visitasAndalucia + 1}
+                    }
+                    return (visitasAndalucia/50)*100
+                case "100AN":
+                    var visitasAndalucia = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Andalucia"){visitasAndalucia = visitasAndalucia + 1}
+                    }
+                    return (visitasAndalucia/100)*100
+                case "5CAN":
+                    var visitasCanarias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Canarias"){visitasCanarias = visitasCanarias + 1}
+                    }
+                    return (visitasCanarias/5)*100
+                case "10CAN":
+                    var visitasCanarias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Canarias"){visitasCanarias = visitasCanarias + 1}
+                    }
+                    return (visitasCanarias/10)*100
+                case "25CAN":
+                    var visitasCanarias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Canarias"){visitasCanarias = visitasCanarias + 1}
+                    }
+                    return (visitasCanarias/25)*100
+                case "50CAN":
+                    var visitasCanarias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Canarias"){visitasCanarias = visitasCanarias + 1}
+                    }
+                    return (visitasCanarias/50)*100
+                case "100CAN":
+                    var visitasCanarias = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Canarias"){visitasCanarias = visitasCanarias + 1}
+                    }
+                    return (visitasCanarias/100)*100
+                case "5IB":
+                    var visitasIslasBaleares = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Islas Baleares"){visitasIslasBaleares = visitasIslasBaleares + 1}
+                    }
+                    return (visitasIslasBaleares/5)*100
+                case "10IB":
+                    var visitasIslasBaleares = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Islas Baleares"){visitasIslasBaleares = visitasIslasBaleares + 1}
+                    }
+                    return (visitasIslasBaleares/10)*100
+                case "25IB":
+                    var visitasIslasBaleares = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Islas Baleares"){visitasIslasBaleares = visitasIslasBaleares + 1}
+                    }
+                    return (visitasIslasBaleares/25)*100
+                case "50IB":
+                    var visitasIslasBaleares = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Islas Baleares"){visitasIslasBaleares = visitasIslasBaleares + 1}
+                    }
+                    return (visitasIslasBaleares/50)*100
+                case "100IB":
+                    var visitasIslasBaleares = 0
+                    for(var i=0;i<lugaresVisitados.length;i++){
+                        if(lugaresVisitados[i].CCAA == "Islas Baleares"){visitasIslasBaleares = visitasIslasBaleares + 1}
+                    }
+                    return (visitasIslasBaleares/100)*100
+                default: 
+                    return 0
+            }
+            
+        }else {
             for(var i=0;i<logrosUsuario.length;i++){
                 if (logrosUsuario[i].idLogros == logro.idLogros){return 100}
             }

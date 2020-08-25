@@ -56,12 +56,10 @@ api.post('/askForLogros', async(req,res) => {
 			} else if(idLugar == -2){//cambio de nivel
 
 			} else {//lugar visitado
-				const logrosLugares = askForLogrosHelper.lugarLogros(lugar,visitas,idUsuario);
+				const logrosLugares = askForLogrosHelper.lugarLogros(lugar[0],visitas,idUsuario);
 				if (logrosLugares.length > 0) {
-					console.log("Logros obtenidos!", logrosLugares);
 					askForLogrosHelper.InsertNewVisita(lugar,idUsuario);
 					const logros = await askForLogrosHelper.InsertNewLogro(logrosLugares,idUsuario);
-					console.log("Logros obtenidos: ", logros);
 					askForLogrosHelper.updatePremios(logros,idUsuario);
 					var data = {
 						"state":"OK",

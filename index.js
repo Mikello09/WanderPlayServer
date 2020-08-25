@@ -4,10 +4,12 @@ const appRanking = require('./Ranking/ranking');
 const appUsuarios = require('./Users/users');
 const appLugares = require('./Lugares/lugares');
 const appLogros = require('./Logros/logros');
+const appAvatares = require('./Avatares/avatares');
 const configUsers = require('./Users/usersConfig');
 const configLugares = require('./Lugares/lugaresConfig');
 const configLogros = require('./Logros/logrosConfig');
 const configRanking = require('./Ranking/rankingConfig');
+const configAvatares = require('./Avatares/avataresConfig');
 
 var nodeStatic = require('node-static');
 
@@ -28,6 +30,10 @@ appLogros.listen(configLogros.port, listeningMask, () => {
 
 appRanking.listen(configRanking.port, listeningMask, () => {
 	console.log(`ranking listening in http:://${listeningMask}:${configRanking.port}`)
+});
+
+appAvatares.listen(configAvatares.port, listeningMask, () => {
+    console.log(`avatares listening in http:://${listeningMask};${configAvatares.port}`)
 });
 
 var file = new nodeStatic.Server('./Resources/Categorias');

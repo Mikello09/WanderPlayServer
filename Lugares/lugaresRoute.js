@@ -26,7 +26,7 @@ api.post('/getAllLugares', (req,res) => {
 		var sql = "SELECT * from Lugar";
 		connection.query(sql, function(err, result){
 			if(err){
-				res.send('Error en la conexion: ' + err);
+				res.send('Error en la conexion: ' + err); 
 			} else {
 				res.json({result});
 			}
