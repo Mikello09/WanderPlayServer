@@ -5,6 +5,7 @@ const api = express.Router();
 const bodyParser = require('body-parser');
 const databaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
+const mongoose = require('mongoose');
 const puntosConfig = require('./PuntosConfiguration/puntosConfig');
 
 api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
