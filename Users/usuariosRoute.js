@@ -15,7 +15,7 @@ api.post('/doLogin', (req,res) => {
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
 		mongoose.connect(databaseConfig.uri, {useNewUrlParser: true, useUnifiedTopology: true})
         .then(() => {
-            const Persona = mongoose.model('Persona', databaseConfig.usuarioSchema);
+            const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
             Usuario.findOne({
                 nombre: nombre,
                 pass: pass
