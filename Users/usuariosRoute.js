@@ -2,55 +2,39 @@
 
 const express = require('express');
 const api = express.Router();
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const databaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
 const puntosConfig = require('./PuntosConfiguration/puntosConfig');
 
-const connection = mysql.createConnection({
-	host: databaseConfig.host,
-	user: databaseConfig.user,
-	password: databaseConfig.password,
-	database: databaseConfig.database,
-	multipleStatements: true
-});
-
 api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
 
 api.post('/doLogin', (req,res) => {
-	var email = req.body.email;
+	var nombre = req.body.nombre;
 	var pass = req.body.contrasena;
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
-		var sql = "SELECT * from Usuario WHERE Email = ? AND Contrasena = ?";
-		connection.query(sql, [email,pass], function(err, result){
-			if(err){
-				var data = {
-					"state":"SQLError",
-					"reason":err
-				};
-				res.json({data});
-			} else {
-				if(result.length > 0){
-					console.log('LoginSuccess');
-					var data = {
-						"state":"OK",
-						"data":result
-					};
-					res.json({data});
-				} else {
-					console.log('LoginFail');
-					var data = {
-						"state":"Fail",
-						"reason":"Usuario/Contraseña incorrectos"
-					};
-					res.json({data});
-				}
-				
-			}
-		});
+		mongoose.connect(databaseConfig.uri, {useNewUrlParser: true, useUnifiedTopology: true})
+        .then(() => {
+            const Persona = mongoose.model('Persona', databaseConfig.usuarioSchema);
+            Usuario.findOne({
+                nombre: nombre,
+                pass: pass
+            }, function(err, usuario){  
+                if(usuario != null){
+                    res.status(200).json({usuario});
+                } else {
+                    res.status(400).json({"reason":"Usuario/contraseña incorrectos"});
+                }
+            })
+            .catch(err => {
+                res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
+            })
+        })
+        .catch(err => {
+            res.status(500).json({"reason":"Error en conexión a base de datos"});
+        })
 	}else {
-		res.json({"state":"Unauthorized"});
+		res.status(401).json({"reason":"Unauthorized"});
 	}
 });
 
@@ -61,26 +45,43 @@ api.post('/registerUsuario', (req,res) => {
 		var avatar = req.body.avatar;
 		var contrasena = req.body.contrasena;
 		if(nombre == null || contrasena == null || avatar == null){
-			console.log('Valores nulos');
-			throw err;
+			res.status(400).json({"reason":"Faltan valores"})
 		} else {
-			var sql = "INSERT INTO Usuario (Nombre, Avatar, Contrasena, Puntos, Monedas) VALUES (?, ?, ?, ?, ?)";
-			connection.query(sql, [nombre, avatar, contrasena,0,0] ,function (err, result) {
-				if (err){
-					var data = {
-						"state":"SQLError",
-						"reason":err
-					};
-					res.json({data});
-				} else {
-					console.log("User registered: " + nombre);
-					res.json({'idUsuario':result.insertId});
-				}
-			});
+			mongoose.connect(databaseConfig.uri, {useNewUrlParser: true, useUnifiedTopology: true})
+			.then(() => {
+				console.log("successful connection!");
+				const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
+				const nuevoUsuario = new Usuario({ 
+					nombre: nombre,
+					apellidos: "",
+					email: "",
+					direccion: "",
+					pais: "",
+					provincia: "",
+					ciudad: "",
+					edad: 0,
+					puntos: 0,
+					contrasena: contrasena,
+					ultimoIngreso: "",
+					version: "",
+					nivel: 0,
+					monedas: 0,
+					diamantes: 0,
+					avatar: avatar
+				});
+				nuevoUsuario.save().then(doc => {
+					res.status(200).json({"nombre":nombre,"contrasena":contrasena});
+				})
+				.catch(err => {
+					res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
+				})
+			})
+			.catch(err => {
+				res.status(500).json({"reason":"Error en conexión a base de datos"});
+			})
 		}
-		
 	} else {
-		res.json({"state":"Unauthorized"});
+		res.status(401).json({"reason":"Unauthorized"});
 	}
 });
 
