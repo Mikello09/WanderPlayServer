@@ -5,7 +5,9 @@ const api = express.Router();
 const bodyParser = require('body-parser');
 const databaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
+const mongo = require('mongodb').MongoClient;
 const mongoose = require('mongoose');
+const { MongoNetworkError } = require('mongodb');
 const puntosConfig = require('./PuntosConfiguration/puntosConfig');
 
 api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
@@ -14,9 +16,7 @@ api.post('/doLogin', (req,res) => {
 	var nombre = req.body.nombre;
 	var pass = req.body.contrasena;
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
-		mongoose.connect(databaseConfig.uri, {useNewUrlParser: true, useUnifiedTopology: true})
-        .then(() => {
-            const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
+			const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
             Usuario.findOne({
                 nombre: nombre,
                 pass: pass
@@ -29,11 +29,7 @@ api.post('/doLogin', (req,res) => {
             })
             .catch(err => {
                 res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
-            })
-        })
-        .catch(err => {
-            res.status(500).json({"reason":"Error en conexión a base de datos"});
-        })
+            });
 	}else {
 		res.status(401).json({"reason":"Unauthorized"});
 	}
@@ -44,12 +40,10 @@ api.post('/registerUsuario', (req,res) => {
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
 		var nombre = req.body.nombre;
 		var avatar = req.body.avatar;
-		var contrasena = req.body.contrasena;
-		if(nombre == null || contrasena == null || avatar == null){
+		var pass = req.body.pass;
+		if(nombre == null || pass == null || avatar == null){
 			res.status(400).json({"reason":"Faltan valores"})
 		} else {
-			mongoose.connect(databaseConfig.uri, {useNewUrlParser: true, useUnifiedTopology: true})
-			.then(() => {
 				console.log("successful connection!");
 				const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
 				const nuevoUsuario = new Usuario({ 
@@ -62,7 +56,7 @@ api.post('/registerUsuario', (req,res) => {
 					ciudad: "",
 					edad: 0,
 					puntos: 0,
-					contrasena: contrasena,
+					contrasena: pass,
 					ultimoIngreso: "",
 					version: "",
 					nivel: 0,
@@ -71,15 +65,11 @@ api.post('/registerUsuario', (req,res) => {
 					avatar: avatar
 				});
 				nuevoUsuario.save().then(doc => {
-					res.status(200).json({"nombre":nombre,"contrasena":contrasena});
+					res.status(200).json({"nombre":nombre,"contrasena":pass});
 				})
 				.catch(err => {
 					res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
-				})
-			})
-			.catch(err => {
-				res.status(500).json({"reason":"Error en conexión a base de datos"});
-			})
+				});
 		}
 	} else {
 		res.status(401).json({"reason":"Unauthorized"});
