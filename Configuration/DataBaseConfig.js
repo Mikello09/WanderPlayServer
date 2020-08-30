@@ -32,4 +32,20 @@ const usuarioSchema = new mongoose.Schema({
 	avatar: String
 }); 
 
-module.exports = {usuarioSchema, uri}
+const lugarSchema = new mongoose.Schema({
+	nombre: String,
+	latitud: String,
+	longitud: String,
+	descripcion: String,
+	puntos: Number,
+	categoria: String,
+	provincia: String,
+	ccaa: String,
+	foto1: String,
+	foto2: String,
+	foto3: String,
+	localidad: String,
+	interes: String
+});
+
+module.exports = {usuarioSchema, lugarSchema, uri}
