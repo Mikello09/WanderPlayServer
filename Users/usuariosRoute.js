@@ -8,7 +8,6 @@ const proxy = require('../Configuration/Proxy');
 const mongo = require('mongodb').MongoClient;
 const mongoose = require('mongoose');
 const { MongoNetworkError } = require('mongodb');
-const puntosConfig = require('./PuntosConfiguration/puntosConfig');
 
 api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
 
@@ -62,8 +61,9 @@ api.post('/registerUsuario', (req,res) => {
 					nivel: 0,
 					monedas: 0,
 					diamantes: 0,
-					avatar: avatar
+					avatarActivo: avatar
 				});
+				nuevoUsuario.avatares.push(avatar);
 				nuevoUsuario.save().then(doc => {
 					res.status(200).json({"nombre":nombre,"contrasena":pass});
 				})
@@ -73,35 +73,6 @@ api.post('/registerUsuario', (req,res) => {
 		}
 	} else {
 		res.status(401).json({"reason":"Unauthorized"});
-	}
-});
-
-api.post('/getUserProfile', (req,res) => {
-	var datetime = new Date();
-	console.log('gettingProfile', datetime);
-	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
-		var idUsuario = req.body.idUsuario
-		var sql = "UPDATE Usuario SET UltimoIngreso = ? where idUsuario = ?;SELECT * FROM Usuario where idUsuario = ?; SELECT * FROM Categorias;SELECT * FROM Avatar;";
-		connection.query(sql, [datetime, idUsuario, idUsuario, idUsuario], function(err,results) {
-			if (err){
-				var data = {
-					"state":"SQLError",
-					"reason":err
-				};
-				res.json({data});
-			} else {
-				var data = {
-					"state":"OK",
-					"userData":results[1],
-					"categorias":results[2],
-					"niveles":puntosConfig.getAllNivelsPoints(),
-					"avatares":results[3]
-				}
-				res.json({data});
-			}
-		});	
-	} else {
-		res.json({"state":"Unauthorized"});
 	}
 });
 

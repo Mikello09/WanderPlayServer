@@ -1,51 +1,58 @@
 'use strict';
 
 const express = require('express');
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const util = require('util');
 const dataBaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
+const mongoose = require('mongoose');
 
 
 const api = express.Router();
-const connection = mysql.createConnection({
-    host: dataBaseConfig.host,
-    user: dataBaseConfig.user,
-    password: dataBaseConfig.password,
-    database: dataBaseConfig.database,
-    multipleStatements: true
-});
 
 api.use(bodyParser.urlencoded({extended:false}))//necesario para parsear las respuestas en el body
 
-const query = util.promisify(connection.query).bind(connection);//para hacer las llamadas con await
-
-api.get('/getAllAvatares', async(req,res) => {
+api.post('/getAllAvatares', (req,res) => {
     if(proxy.isUserAuthenticated(req.headers['authtoken'])){
-        try{
-            connection.query("SELECT * FROM Avatar" ,function(err, result){	
-				if(err){
-					throw err;
-				} else {
-					var data = {
-                        "state":"OK",
-                        "data":result
-                    }
-                    res.json({data})
-				}
-			});
-        }catch(err){
-            console.log("Error", err);
-			var data = {
-				"state":"SQLError",
-				"reason":err
-			};
-			res.json({data});
+        const Avatar = mongoose.model('Avatar',databaseConfig.avatarSchema);
+        Avatar.find()
+        .then(avatares => {
+            res.status(200).json({avatares});
+        })
+        .catch(err => {
+            res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
+        });
+    } else {
+        res.status(401).json({"state":"Unauthorized"});
+    }
+});
+
+api.post('/insertAvatar', (req,res) => {
+    if(proxy.isUserAuthenticated(req.headers['authtoken'])){
+        var nombre = req.body.nombre;
+        var descripcion = req.body.descripcion;
+        var categorias = req.body.categorias;
+        if(nombre == null || nombre == "" || descripcion == null || descripcion == "" || categorias == null || categorias == ""){
+            res.status(400).json({"reason":"Faltan valores"});
+        } else {
+            const Avatar = mongoose.model('Avatar', dataBaseConfig.avatarSchema);
+            const nuevoAvatar = new Avatar({
+                nombre: nombre,
+                descripcion: descripcion,
+                categorias: categorias
+            });
+            nuevoAvatar.save().then(avatar =>{
+                res.status(200).json({avatar})
+            })
+            .catch(err => {
+                res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
+            });
         }
     } else {
-        res.json({"state":"Unauthorized"});
+        res.status(401).json({"state":"Unauthorized"});
     }
-})
+});
+
+
 
 module.exports = api
