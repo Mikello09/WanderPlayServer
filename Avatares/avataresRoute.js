@@ -2,7 +2,6 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const util = require('util');
 const dataBaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
 const mongoose = require('mongoose');
@@ -14,7 +13,7 @@ api.use(bodyParser.urlencoded({extended:false}))//necesario para parsear las res
 
 api.post('/getAllAvatares', (req,res) => {
     if(proxy.isUserAuthenticated(req.headers['authtoken'])){
-        const Avatar = mongoose.model('Avatar',databaseConfig.avatarSchema);
+        const Avatar = mongoose.model('Avatar', dataBaseConfig.avatarSchema);
         Avatar.find()
         .then(avatares => {
             res.status(200).json({avatares});
