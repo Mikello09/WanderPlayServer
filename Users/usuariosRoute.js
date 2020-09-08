@@ -34,7 +34,7 @@ api.post('/doLogin', (req,res) => {
 	}
 });
 
-api.post('/registerUsuario', (req,res) => {
+api.post('/registrarUsuario', (req,res) => {
 	console.log('Registering user');
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
 		var nombre = req.body.nombre;
@@ -64,8 +64,8 @@ api.post('/registerUsuario', (req,res) => {
 					avatarActivo: avatar
 				});
 				nuevoUsuario.avatares.push(avatar);
-				nuevoUsuario.save().then(doc => {
-					res.status(200).json({"nombre":nombre,"contrasena":pass});
+				nuevoUsuario.save().then(usuario => {
+					res.status(200).json({usuario});
 				})
 				.catch(err => {
 					res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
