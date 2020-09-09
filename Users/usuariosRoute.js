@@ -43,33 +43,32 @@ api.post('/registrarUsuario', (req,res) => {
 		if(nombre == null || pass == null || avatar == null){
 			res.status(400).json({"reason":"Faltan valores"})
 		} else {
-				console.log("successful connection!");
-				const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
-				const nuevoUsuario = new Usuario({ 
-					nombre: nombre,
-					apellidos: "",
-					email: "",
-					direccion: "",
-					pais: "",
-					provincia: "",
-					ciudad: "",
-					edad: 0,
-					puntos: 0,
-					contrasena: pass,
-					ultimoIngreso: "",
-					version: "",
-					nivel: 0,
-					monedas: 0,
-					diamantes: 0,
-					avatarActivo: avatar
-				});
-				nuevoUsuario.avatares.push(avatar);
-				nuevoUsuario.save().then(usuario => {
-					res.status(200).json({usuario});
-				})
-				.catch(err => {
-					res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
-				});
+			const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
+			const nuevoUsuario = new Usuario({ 
+				nombre: nombre,
+				apellidos: "",
+				email: "",
+				direccion: "",
+				pais: "",
+				provincia: "",
+				ciudad: "",
+				edad: 0,
+				puntos: 0,
+				contrasena: pass,
+				ultimoIngreso: "",
+				version: "",
+				nivel: 0,
+				monedas: 0,
+				diamantes: 0,
+				avatarActivo: avatar
+			});
+			nuevoUsuario.avatares.push(avatar);
+			nuevoUsuario.save().then(usuario => {
+				res.status(200).json({usuario});
+			})
+			.catch(err => {
+				res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
+			});
 		}
 	} else {
 		res.status(401).json({"reason":"Unauthorized"});

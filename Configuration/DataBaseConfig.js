@@ -30,7 +30,8 @@ const usuarioSchema = new mongoose.Schema({
 	monedas: Number,
 	diamantes: Number,
 	avatarActivo: String,
-	avatares: [{type:String}]
+	avatares: [{type:String}],
+	lugares: [{type:String}]
 }); 
 
 const lugarSchema = new mongoose.Schema({
@@ -55,4 +56,15 @@ const avatarSchema = new mongoose.Schema({
 	categorias: String
 });
 
-module.exports = {usuarioSchema, lugarSchema, avatarSchema, uri}
+const logroSchema = new mongoose.Schema({
+	titulo: String,
+	descripcion: String,
+	imagen: String,
+	puntos: Number,
+	monedas: Number,
+	logroToken: String,
+	diamantes: Number,
+	grupo: String
+});
+
+module.exports = {usuarioSchema, lugarSchema, avatarSchema, logroSchema, uri}

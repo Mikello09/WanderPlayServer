@@ -10,6 +10,8 @@ const util = require('util');
 const getAllLogrosHelper = require('./Helpers/GetAllLogrosHelper');
 const askForLogrosHelper = require('./Helpers/AskForLogrosHelper');
 
+const mongoose = require('mongoose');
+
 const connection = mysql.createConnection({
 	host: databaseConfig.host,
 	user: databaseConfig.user,
@@ -90,40 +92,84 @@ api.post('/askForLogros', async(req,res) => {
 });
 
 api.post('/getAllLogros', async(req,res) => {
-	var idUsuario = req.body.idUsuario;
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
-		try{
-			const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-			const logros = await query("SELECT * FROM Logros");
-			const logrosUsuario = await query("SELECT Logros.* FROM Logros JOIN LogrosUsuarios ON Logros.idLogros = LogrosUsuarios.Logros_idLogros WHERE LogrosUsuarios.Usuario_idUsuario = ?", [idUsuario]);
-
-			var logrosConPorcentaje = []
-			for(var i=0;i<logros.length;i++){
-				const porcentaje = getAllLogrosHelper.calculatePercent(logros[i],lugaresVisitados,logrosUsuario);
-				var logroConPorcentaje = {
-					"idLogros": logros[i].idLogros,
-					"Titulo": logros[i].Titulo,
-					"Descripcion": logros[i].Descripcion,
-					"Imagen": logros[i].Imagen,
-					"Puntos": logros[i].Puntos,
-					"Monedas": logros[i].Monedas,
-					"LogroToken": logros[i].LogroToken,
-					"Diamantes": logros[i].Diamantes,
-					"Grupo": logros[i].Grupo,
-					"Porcentaje": porcentaje
-				};
-				logrosConPorcentaje.push(logroConPorcentaje);
+		var nombre = req.body.nombre;
+		if(nombre == null || nombre == ""){
+			res.status(400).json({"reason":"Faltan valores"});
+		} else {
+			try{
+				const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
+				const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
+				const Logro = mongoose.model('Logro', databaseConfig.logroSchema);
+	
+				const usuario = await Usuario.findOne({nombre: nombre});
+				var lugaresVisitados = []
+				for(var i=0;i<usuario.lugares.length;i++){
+					const lugar = await Lugar.findById(usuario.lugares[i]);
+					lugaresVisitados.push(lugar);
+				}
+				const logros = await Logro.find();
+	
+				var logrosConPorcentaje = []
+				for(var i=0;i<logros.length;i++){
+					const porcentaje = getAllLogrosHelper.calculatePercent(logros[i],lugaresVisitados);
+					var logroConPorcentaje = {
+						"idLogros": logros[i]._id,
+						"Titulo": logros[i].titulo,
+						"Descripcion": logros[i].descripcion,
+						"Imagen": logros[i].imagen,
+						"Puntos": logros[i].puntos,
+						"Monedas": logros[i].monedas,
+						"LogroToken": logros[i].logroToken,
+						"Diamantes": logros[i].diamantes,
+						"Grupo": logros[i].grupo,
+						"Porcentaje": porcentaje
+					};
+					logrosConPorcentaje.push(logroConPorcentaje);
+				}
+				res.json(getAllLogrosHelper.divideIntoGroups(logrosConPorcentaje));
+			}catch(err){
+				res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
 			}
-			res.json(getAllLogrosHelper.divideIntoGroups(logrosConPorcentaje));
-		}catch(err){
-			var data = {
-				"state":"SQLError",
-				"reason":err
-			};
-			res.json({data});
 		}
 	} else {
-		res.json({"state":"Unauthorized"});
+		res.status(401).json({"state":"Unauthorized"});
+	}
+});
+
+api.post('/insertLogro', (req,res) => {
+	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
+		var titulo = req.body.titulo;
+		var descripcion = req.body.descripcion;
+		var imagen = req.body.imagen;
+		var puntos = req.body.puntos;
+		var monedas = req.body.monedas;
+		var logroToken = req.body.logroToken;
+		var diamantes = req.body.diamantes;
+		var grupo = req.body.grupo;
+		if(titulo == null || titulo == "" || descripcion == null || descripcion == "" || puntos == null || puntos == "" || monedas == null || monedas == "" || logroToken == null || logroToken == "" || diamantes == null || diamantes == "" || grupo == null || grupo == ""){
+			res.status(400).json({"reason":"Faltan valores"});
+		} else {
+			const Logro = mongoose.model('Logro', databaseConfig.logroSchema);
+			const nuevoLogro = new Logro({ 
+				titulo: titulo,
+				descripcion: descripcion,
+				imagen: imagen,
+				puntos: puntos,
+				monedas: monedas,
+				logroToken: logroToken,
+				diamantes: diamantes,
+				grupo: grupo
+			});
+			nuevoLogro.save().then(logro =>{
+				res.status(200).json({logro});
+			})
+			.catch(err => {
+				res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
+			});
+		}
+	} else {
+		res.status(401).json({"state":"Unauthorized"});
 	}
 });
 
