@@ -131,16 +131,16 @@ api.post('/getAllLogros', async(req,res) => {
 				for(var i=0;i<logros.length;i++){
 					const porcentaje = getAllLogrosHelper.calculatePercent(logros[i],lugaresVisitados);
 					var logroConPorcentaje = {
-						"idLogros": logros[i]._id,
-						"Titulo": logros[i].titulo,
-						"Descripcion": logros[i].descripcion,
-						"Imagen": logros[i].imagen,
-						"Puntos": logros[i].puntos,
-						"Monedas": logros[i].monedas,
-						"LogroToken": logros[i].logroToken,
-						"Diamantes": logros[i].diamantes,
-						"Grupo": logros[i].grupo,
-						"Porcentaje": porcentaje
+						"_id": logros[i]._id,
+						"titulo": logros[i].titulo,
+						"descripcion": logros[i].descripcion,
+						"imagen": logros[i].imagen,
+						"puntos": logros[i].puntos,
+						"monedas": logros[i].monedas,
+						"logroToken": logros[i].logroToken,
+						"diamantes": logros[i].diamantes,
+						"grupo": logros[i].grupo,
+						"porcentaje": porcentaje
 					};
 					logrosConPorcentaje.push(logroConPorcentaje);
 				}
