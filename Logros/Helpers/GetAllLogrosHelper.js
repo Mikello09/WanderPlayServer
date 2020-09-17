@@ -2,10 +2,10 @@ divideIntoGroups = function(logros) {
     var grupos = []
     for(var i=0;i<logros.length;i++){
         if(grupos.length == 0){
-            grupos.push(logros[i].Grupo)
+            grupos.push(logros[i].grupo)
         } else {
-            if(!grupos.includes(logros[i].Grupo)){
-                grupos.push(logros[i].Grupo)
+            if(!grupos.includes(logros[i].grupo)){
+                grupos.push(logros[i].grupo)
             }
         }
     }
@@ -13,7 +13,7 @@ divideIntoGroups = function(logros) {
     for(var i=0;i<grupos.length;i++){
         var logroEnGrupo = []
         for(var j=0;j<logros.length;j++){
-            if(logros[j].Grupo == grupos[i]){
+            if(logros[j].grupo == grupos[i]){
                 logroEnGrupo.push(logros[j])
             }
         }
