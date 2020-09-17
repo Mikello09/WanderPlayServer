@@ -2,37 +2,54 @@
 
 const express = require('express');
 const api = express.Router();
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const databaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
-const util = require('util');
 const getAllLogrosHelper = require('./Helpers/GetAllLogrosHelper');
 const askForLogrosHelper = require('./Helpers/AskForLogrosHelper');
 
 const mongoose = require('mongoose');
 
-const connection = mysql.createConnection({
-	host: databaseConfig.host,
-	user: databaseConfig.user,
-	password: databaseConfig.password,
-	database: databaseConfig.database,
-	multipleStatements: true,
-	debug: false
-});
-
 api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
 
-const query = util.promisify(connection.query).bind(connection);
 
 
 api.post('/askForLogros', async(req,res) => {
-	console.log("Asking for logros...")
-	var idUsuario = req.body.idUsuario;
-	var idLugar = req.body.idLugar;
+	console.log("Asking for logros...");
+	var nombre = req.body.nombre;
+	var lugar = req.body.lugar;
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
+		if(nombre == "" || nombre == null || lugar == "" || lugar == null){
+			res.status(400).json({"reason":"Faltan valores"});
+		} else {
+
+		}
 		try{
-			const lugar = await query("SELECT * FROM Lugar WHERE idLugar = ?", idLugar);
+
+			const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
+			const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
+			const Logro = mongoose.model('Logro', databaseConfig.logroSchema);
+
+			const usuario = await Usuario.findOne({nombre: nombre});
+			if (lugar == "-1"){
+				const logroBienvenida = askForLogrosHelper.isFirstTimeInTheApp(usuario.logros);
+				if (logroBienvenida.length > 0){
+					var logrosObtenidos = []
+					const logro = await Logro.findOne({logroToken:logroBienvenida[0]});
+					logrosObtenidos.push(logro)
+					usuario.logros.push(logro.logroToken);
+					usuario.puntos = logro.puntos;
+					usuario.monedas = logro.monedas;
+					usuario.diamantes = logro.diamantes;
+					const guardado = await usuario.save();
+					res.status(200).json({"logros":logrosObtenidos})
+				}else{
+					res.status(410).json({"reason":"no hay logros"})
+				}
+			}
+
+
+			/*const lugar = await query("SELECT * FROM Lugar WHERE idLugar = ?", idLugar);
 			const visitas = await query("SELECT * FROM Visitas WHERE Usuario_idUsuario = ?", idUsuario);
 			const logrosUsuario = await query("SELECT * FROM LogrosUsuarios WHERE Usuario_idUsuario = ?", idUsuario);
 			
@@ -75,7 +92,7 @@ api.post('/askForLogros', async(req,res) => {
 					};
 					res.json({data});
 				}
-			}
+			}*/
 
 
 		} catch(err){

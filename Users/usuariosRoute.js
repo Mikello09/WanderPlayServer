@@ -57,7 +57,6 @@ api.post('/registrarUsuario', (req,res) => {
 				contrasena: pass,
 				ultimoIngreso: "",
 				version: "",
-				nivel: 0,
 				monedas: 0,
 				diamantes: 0,
 				avatarActivo: avatar

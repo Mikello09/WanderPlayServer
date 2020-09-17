@@ -26,12 +26,12 @@ const usuarioSchema = new mongoose.Schema({
 	contrasena: String,
 	ultimoIngreso: String,
 	version: String,
-	nivel: Number,
 	monedas: Number,
 	diamantes: Number,
 	avatarActivo: String,
 	avatares: [{type:String}],
-	lugares: [{type:String}]
+	lugares: [{type:String}],
+	logros: [{type:String}]
 }); 
 
 const lugarSchema = new mongoose.Schema({

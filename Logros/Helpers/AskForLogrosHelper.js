@@ -19,7 +19,6 @@ const connection = mysql.createConnection({
 const query = util.promisify(connection.query).bind(connection);
 
 isFirstTimeInTheApp = function(logros){
-    console.log('3');
     var logro = []
     if(logros.length == 0){
         logro.push('LB');
