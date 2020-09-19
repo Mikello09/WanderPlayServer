@@ -26,7 +26,7 @@ divideIntoGroups = function(logros) {
     return logrosOrdenados
 };
 
-calculatePercent = function(logro, lugaresVisitados){
+calculatePercent = function(logro, lugaresVisitados, logrosUsuario){
 
         if(logro.grupo == "Lugares"){
             switch (logro.logroToken) {
@@ -79,7 +79,7 @@ calculatePercent = function(logro, lugaresVisitados){
                 default:
                     return 0
             }
-        } else if(logro.grupo == "categorias"){
+        } else if(logro.grupo == "Categorias"){
             switch(logro.logroToken){
                 case "5CPV":
                     var visitasCastillosyPalacios = 0
@@ -355,7 +355,7 @@ calculatePercent = function(logro, lugaresVisitados){
                     return 0
                 
             }
-        } else if (logro.grupo == "ccaa"){
+        } else if (logro.grupo == "CCAA"){
             switch(logro.logroToken){
                 case "5GA":
                     var visitasGalicia = 0
@@ -866,9 +866,9 @@ calculatePercent = function(logro, lugaresVisitados){
             }
             
         }else {
-            /*for(var i=0;i<logrosUsuario.length;i++){
-                if (logrosUsuario[i].idLogros == logro.idLogros){return 100}
-            }*/
+            for(var i=0;i<logrosUsuario.length;i++){
+                if (logrosUsuario[i].logroToken == logro.logroToken){return 100}
+            }
             return 0
         }
 

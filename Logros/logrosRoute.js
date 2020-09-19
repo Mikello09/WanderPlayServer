@@ -120,7 +120,7 @@ api.post('/getAllLogros', async(req,res) => {
 	
 				var logrosConPorcentaje = []
 				for(var i=0;i<logros.length;i++){
-					const porcentaje = getAllLogrosHelper.calculatePercent(logros[i],lugaresVisitados);
+					const porcentaje = getAllLogrosHelper.calculatePercent(logros[i],lugaresVisitados,logros);
 					var logroConPorcentaje = {
 						"_id": logros[i]._id,
 						"titulo": logros[i].titulo,
