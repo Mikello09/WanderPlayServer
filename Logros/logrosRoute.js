@@ -81,7 +81,7 @@ api.post('/askForLogros', async(req,res) => {
 					usuario.monedas = usuario.monedas + monedas;
 					usuario.diamantes = usuario.diamantes + diamantes;
 					const guardado = await usuario.save();
-					res.status(200).json(logrosADevolver);
+					res.status(200).json({"logros":logrosADevolver});
 				} else {
 					res.status(410).json({"reason":"no hay logros"})
 				}
