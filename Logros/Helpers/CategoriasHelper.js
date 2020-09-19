@@ -57,20 +57,8 @@ ID
 
 */
 
-const mysql = require('mysql');
 const databaseConfig = require('../../Configuration/DataBaseConfig');
-const util = require('util');
-
-const connection = mysql.createConnection({
-	host: databaseConfig.host,
-	user: databaseConfig.user,
-	password: databaseConfig.password,
-	database: databaseConfig.database,
-	multipleStatements: true,
-	debug: false
-});
-
-const query = util.promisify(connection.query).bind(connection);
+const mongoose = require('mongoose');
 
 const castillosYpalacios = [
     '5CPV',
@@ -145,43 +133,61 @@ const playas = [
 ]
 
 module.exports.getCategoriasLogros = getCategoriasLogros;
-async function getCategoriasLogros(idUsuario,lugar){
+async function getCategoriasLogros(usuario,lugar){
+    var query = ""
+    var lugaresVisitados = []
+    for(i=0;i<usuario.lugares;i++){
+        query = query.concat(query,"{");
+        query = query.concat("_id:");
+        query = query.concat(usuario.lugares[i]);
+        query = query.concat("}");
+        if(i < (usuario.lugares.length - 1)){
+            query = query.concat(",")
+        }
+    }
+    if(query != ""){
+        const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
+        const lugaresVisitados = await Lugar.find({$or: [
+        query
+      ]})
+    }
+    
     var logrosCategorias = []
-    switch(lugar.Categoria){
+    switch(lugar.categoria){
         case "Castillos y Palacios":
-            const logrosCastillosyPalacios = await getCastillosyPalaciosLogro(idUsuario);
+            const logrosCastillosyPalacios = await getCastillosyPalaciosLogro(lugaresVisitados);
             if (logrosCastillosyPalacios.length > 0){logrosCategorias.push(logrosCastillosyPalacios[0])}
             break;
         case "Pueblos":
-            const pueblos = await getPueblos(idUsuario);
+            const pueblos = await getPueblos(lugaresVisitados);
             if (pueblos.length > 0){logrosCategorias.push(pueblos[0])}
             break;
         case "Iglesias":
-            const iglesias = await getIglesias(idUsuario);
+            const iglesias = await getIglesias(lugaresVisitados);
             if (iglesias.length > 0){logrosCategorias.push(iglesias[0])}
             break;
         case "Monumentos":
-            const monumentos = await getMonumentos(idUsuario);
+            const monumentos = await getMonumentos(lugaresVisitados);
             if (monumentos.length > 0){logrosCategorias.push(monumentos[0])}
             break;
         case "Calles":
-            const calles = await getCalles(idUsuario);
+            const calles = await getCalles(lugaresVisitados);
             if (calles.length > 0){logrosCategorias.push(calles[0])}
             break;
         case "Miradores":
-            const miradores = await getMiradores(idUsuario);
+            const miradores = await getMiradores(lugaresVisitados);
             if (miradores.length > 0){logrosCategorias.push(miradores[0])}
             break;
         case "Edificios":
-            const edificios = await getEdificios(idUsuario);
+            const edificios = await getEdificios(lugaresVisitados);
             if (edificios.length > 0){logrosCategorias.push(edificios[0])}
             break;
         case "Parques":
-            const parques = await getParques(idUsuario);
+            const parques = await getParques(lugaresVisitados);
             if (parques.length > 0){logrosCategorias.push(parques[0])}
             break;
         case "Playas":
-            const playas = await getPlayas(idUsuario);
+            const playas = await getPlayas(lugaresVisitados);
             if (playas.length > 0){logrosCategorias.push(playas[0])}
             break;
         default:
@@ -190,14 +196,13 @@ async function getCategoriasLogros(idUsuario,lugar){
     return logrosCategorias;
 }
 
-async function getCastillosyPalaciosLogro(idUsuario){
+async function getCastillosyPalaciosLogro(lugaresVisitados){
 
     //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-
+    
     var visitasCastillosyPalacios = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].Categoria == "Castillos y Palacios"){visitasCastillosyPalacios = visitasCastillosyPalacios + 1}
+        if(lugaresVisitados[i].categoria == "Castillos y Palacios"){visitasCastillosyPalacios = visitasCastillosyPalacios + 1}
     }
 
     var logros = []
@@ -219,14 +224,12 @@ async function getCastillosyPalaciosLogro(idUsuario){
 }
 
 
-async function getPueblos(idUsuario){
+async function getPueblos(lugaresVisitados){
 
     //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-
     var visitasPueblos = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].Categoria == "Pueblos"){visitasPueblos = visitasPueblos + 1}
+        if(lugaresVisitados[i].categoria == "Pueblos"){visitasPueblos = visitasPueblos + 1}
     }
 
     var logros = []
@@ -248,14 +251,12 @@ async function getPueblos(idUsuario){
 }
 
 
-async function getIglesias(idUsuario){
+async function getIglesias(lugaresVisitados){
 
     //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-
     var visitasIglesias = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].Categoria == "Pueblos"){visitasIglesias = visitasIglesias + 1}
+        if(lugaresVisitados[i].categoria == "Pueblos"){visitasIglesias = visitasIglesias + 1}
     }
 
     var logros = []
@@ -277,14 +278,12 @@ async function getIglesias(idUsuario){
 }
 
 
-async function getMonumentos(idUsuario){
+async function getMonumentos(lugaresVisitados){
 
     //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-
     var visitasMonumentos = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].Categoria == "Pueblos"){visitasMonumentos = visitasMonumentos + 1}
+        if(lugaresVisitados[i].categoria == "Pueblos"){visitasMonumentos = visitasMonumentos + 1}
     }
 
     var logros = []
@@ -306,14 +305,12 @@ async function getMonumentos(idUsuario){
 }
 
 
-async function getCalles(idUsuario){
+async function getCalles(lugaresVisitados){
 
     //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-
     var visitasCalles = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].Categoria == "Pueblos"){visitasCalles = visitasCalles + 1}
+        if(lugaresVisitados[i].categoria == "Pueblos"){visitasCalles = visitasCalles + 1}
     }
 
     var logros = []
@@ -335,14 +332,12 @@ async function getCalles(idUsuario){
 }
 
 
-async function getMiradores(idUsuario){
+async function getMiradores(lugaresVisitados){
 
     //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-
     var visitasMiradores = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].Categoria == "Pueblos"){visitasMiradores = visitasMiradores + 1}
+        if(lugaresVisitados[i].categoria == "Pueblos"){visitasMiradores = visitasMiradores + 1}
     }
 
     var logros = []
@@ -364,14 +359,12 @@ async function getMiradores(idUsuario){
 }
 
 
-async function getEdificios(idUsuario){
+async function getEdificios(lugaresVisitados){
 
     //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-
     var visitasEdificios = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].Categoria == "Pueblos"){visitasEdificios = visitasEdificios + 1}
+        if(lugaresVisitados[i].categoria == "Pueblos"){visitasEdificios = visitasEdificios + 1}
     }
 
     var logros = []
@@ -393,14 +386,12 @@ async function getEdificios(idUsuario){
 }
 
 
-async function getParques(idUsuario){
+async function getParques(lugaresVisitados){
 
     //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-
     var visitasParques = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].Categoria == "Pueblos"){visitasParques = visitasParques + 1}
+        if(lugaresVisitados[i].categoria == "Pueblos"){visitasParques = visitasParques + 1}
     }
 
     var logros = []
@@ -421,14 +412,12 @@ async function getParques(idUsuario){
     return logros;
 }
 
-async function getPlayas(idUsuario){
+async function getPlayas(lugaresVisitados){
 
     //primero hay que conseguir todos los lugares de las visitas para poder filtrarlos por las categorias
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-
     var visitasPlayas = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].Categoria == "Playas"){visitasPlayas = visitasPlayas + 1}
+        if(lugaresVisitados[i].categoria == "Playas"){visitasPlayas = visitasPlayas + 1}
     }
 
     var logros = []

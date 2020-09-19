@@ -1,17 +1,8 @@
-const mysql = require('mysql');
+
 const databaseConfig = require('../../Configuration/DataBaseConfig');
-const util = require('util');
+const mongoose = require('mongoose');
 
-const connection = mysql.createConnection({
-	host: databaseConfig.host,
-	user: databaseConfig.user,
-	password: databaseConfig.password,
-	database: databaseConfig.database,
-	multipleStatements: true,
-	debug: false
-});
 
-const query = util.promisify(connection.query).bind(connection);
 
 const galicia = [
     '5GA',
@@ -151,76 +142,92 @@ const islasBaleares = [
 
 
 module.exports.getCCAALogros = getCCAALogros;
-async function getCCAALogros(idUsuario,lugar){
+async function getCCAALogros(usuario,lugar){
     var logrosCategorias = []
-    const lugaresVisitados = await query("SELECT Lugar.* FROM Lugar JOIN Visitas ON Lugar.idLugar = Visitas.Lugar_idLugar WHERE Visitas.Usuario_idUsuario = ?", [idUsuario]);
-    switch(lugar.CCAA){
+    var query = ""
+    for(i=0;i<usuario.lugares;i++){
+        query = query.concat(query,"{");
+        query = query.concat("_id:");
+        query = query.concat(usuario.lugares[i]);
+        query = query.concat("}");
+        if(i < (usuario.lugares.length - 1)){
+            query = query.concat(",")
+        }
+    }
+    if (query != ""){
+        const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
+        const lugaresVisitados = await Lugar.find({$or: [
+            query
+          ]})
+    }
+    
+    switch(lugar.ccaa){
         case "Galicia":
-            const logrosGalicia = await getGaliciaLogros(lugaresVisitados);
+            const logrosGalicia = getGaliciaLogros(lugaresVisitados);
             if (logrosGalicia.length > 0){logrosCategorias.push(logrosGalicia[0])}
             break;
         case "Asturias":
-            const logrosAsturias = await getAsturiasLogros(lugaresVisitados);
+            const logrosAsturias = getAsturiasLogros(lugaresVisitados);
             if (logrosAsturias.length > 0){logrosCategorias.push(logrosAsturias[0])}
             break;
         case "Cantabria":
-            const logrosCantabria = await getCantabriaLogros(lugaresVisitados);
+            const logrosCantabria = getCantabriaLogros(lugaresVisitados);
             if (logrosCantabria.length > 0){logrosCategorias.push(logrosCantabria[0])}
             break;
         case "Pais Vasco":
-            const paisVascoLogros = await getPaisVascoLogros(lugaresVisitados);
+            const paisVascoLogros = getPaisVascoLogros(lugaresVisitados);
             if (paisVascoLogros.length > 0){logrosCategorias.push(paisVascoLogros[0])}
             break;
         case "Navarra":
-            const navarraLgros = await getNavarraLogros(lugaresVisitados);
+            const navarraLgros = getNavarraLogros(lugaresVisitados);
             if (navarraLgros.length > 0){logrosCategorias.push(navarraLgros[0])}
             break;
         case "La Rioja":
-            const lariojaLogros = await getLaRiojaLogros(lugaresVisitados);
+            const lariojaLogros = getLaRiojaLogros(lugaresVisitados);
             if (lariojaLogros.length > 0){logrosCategorias.push(lariojaLogros[0])}
             break;
         case "Aragon":
-            const aragonLogros = await getAragonLogros(lugaresVisitados);
+            const aragonLogros = getAragonLogros(lugaresVisitados);
             if (aragonLogros.length > 0){logrosCategorias.push(aragonLogros[0])}
             break;
         case "Cataluna":
-            const catalunaLogros = await getCatalunaLogros(lugaresVisitados);
+            const catalunaLogros = getCatalunaLogros(lugaresVisitados);
             if (catalunaLogros.length > 0){logrosCategorias.push(catalunaLogros[0])}
             break;
         case "Castilla y Leon":
-            const castillaLeonLogros = await getCastillaLeonLogros(lugaresVisitados);
+            const castillaLeonLogros = getCastillaLeonLogros(lugaresVisitados);
             if (castillaLeonLogros.length > 0){logrosCategorias.push(castillaLeonLogros[0])}
             break;
         case "Madrid":
-            const madridLogros = await getMadridLogros(lugaresVisitados);
+            const madridLogros = getMadridLogros(lugaresVisitados);
             if (madridLogros.length > 0){logrosCategorias.push(madridLogros[0])}
             break;
         case "Valencia":
-            const valenciaLogros = await getValenciaLogros(lugaresVisitados);
+            const valenciaLogros = getValenciaLogros(lugaresVisitados);
             if (valenciaLogros.length > 0){logrosCategorias.push(valenciaLogros[0])}
             break;
         case "Murcia":
-            const murciaLogros = await getMurciaLogros(lugaresVisitados);
+            const murciaLogros = getMurciaLogros(lugaresVisitados);
             if (murciaLogros.length > 0){logrosCategorias.push(murciaLogros[0])}
             break;
         case "Castilla La Mancha":
-            const castillaLaManchaLogros = await getCastillaLaManchaLogros(lugaresVisitados);
+            const castillaLaManchaLogros = getCastillaLaManchaLogros(lugaresVisitados);
             if (castillaLaManchaLogros.length > 0){logrosCategorias.push(castillaLaManchaLogros[0])}
             break;
         case "Extremadura":
-            const extremaduraLogros = await getExtremaduraLogros(lugaresVisitados);
+            const extremaduraLogros = getExtremaduraLogros(lugaresVisitados);
             if (extremaduraLogros.length > 0){logrosCategorias.push(extremaduraLogros[0])}
             break;
         case "Andalucia":
-            const andaluciaLogros = await getAndaluciaLogros(lugaresVisitados);
+            const andaluciaLogros = getAndaluciaLogros(lugaresVisitados);
             if (andaluciaLogros.length > 0){logrosCategorias.push(andaluciaLogros[0])}
             break;
         case "Canarias":
-            const canariasLogros = await getCanariasLogros(lugaresVisitados);
+            const canariasLogros = getCanariasLogros(lugaresVisitados);
             if (canariasLogros.length > 0){logrosCategorias.push(canariasLogros[0])}
             break;
         case "Islas Baleares":
-            const islasBalearesLogros = await getIslasBalearesLogros(lugaresVisitados);
+            const islasBalearesLogros = getIslasBalearesLogros(lugaresVisitados);
             if (islasBalearesLogros.length > 0){logrosCategorias.push(islasBalearesLogros[0])}
             break;
         default:
@@ -234,7 +241,7 @@ function getGaliciaLogros(lugaresVisitados){
 
     var visitasGalicia = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Galicia"){visitasGalicia = visitasGalicia + 1}
+        if(lugaresVisitados[i].ccaa == "Galicia"){visitasGalicia = visitasGalicia + 1}
     }
 
     var logros = []
@@ -260,7 +267,7 @@ function getAsturiasLogros(lugaresVisitados){
 
     var visitasAsturias = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Asturias"){visitasAsturias = visitasAsturias + 1}
+        if(lugaresVisitados[i].ccaa == "Asturias"){visitasAsturias = visitasAsturias + 1}
     }
 
     var logros = []
@@ -287,7 +294,7 @@ function getCantabriaLogros(lugaresVisitados){
 
     var visitasCantabria = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Cantabria"){visitasCantabria = visitasCantabria + 1}
+        if(lugaresVisitados[i].ccaa == "Cantabria"){visitasCantabria = visitasCantabria + 1}
     }
 
     var logros = []
@@ -313,7 +320,7 @@ function getPaisVascoLogros(lugaresVisitados){
 
     var visitasPaisVasco = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Pais Vasco"){visitasPaisVasco = visitasPaisVasco + 1}
+        if(lugaresVisitados[i].ccaa == "Pais Vasco"){visitasPaisVasco = visitasPaisVasco + 1}
     }
 
     var logros = []
@@ -339,7 +346,7 @@ function getNavarraLogros(lugaresVisitados){
 
     var visitasNavarra = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Navarra"){visitasNavarra = visitasNavarra + 1}
+        if(lugaresVisitados[i].ccaa == "Navarra"){visitasNavarra = visitasNavarra + 1}
     }
 
     var logros = []
@@ -365,7 +372,7 @@ function getLaRiojaLogros(lugaresVisitados){
 
     var visitasLaRioja = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "La Rioja"){visitasLaRioja = visitasLaRioja + 1}
+        if(lugaresVisitados[i].ccaa == "La Rioja"){visitasLaRioja = visitasLaRioja + 1}
     }
 
     var logros = []
@@ -391,7 +398,7 @@ function getAragonLogros(lugaresVisitados){
 
     var visitasAragon = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Aragon"){visitasAragon = visitasAragon + 1}
+        if(lugaresVisitados[i].ccaa == "Aragon"){visitasAragon = visitasAragon + 1}
     }
 
     var logros = []
@@ -417,7 +424,7 @@ function getCatalunaLogros(lugaresVisitados){
 
     var visitasCataluna = 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Cataluna"){visitasCataluna = visitasCataluna + 1}
+        if(lugaresVisitados[i].ccaa == "Cataluna"){visitasCataluna = visitasCataluna + 1}
     }
 
     var logros = []
@@ -443,7 +450,7 @@ function getCastillaLeonLogros(lugaresVisitados){
 
     var visitasCastillayLeon= 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Castilla y Leon"){visitasCastillayLeon = visitasCastillayLeon + 1}
+        if(lugaresVisitados[i].ccaa == "Castilla y Leon"){visitasCastillayLeon = visitasCastillayLeon + 1}
     }
 
     var logros = []
@@ -469,7 +476,7 @@ function getMadridLogros(lugaresVisitados){
 
     var visitasMadrid= 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Madrid"){visitasMadrid = visitasMadrid + 1}
+        if(lugaresVisitados[i].ccaa == "Madrid"){visitasMadrid = visitasMadrid + 1}
     }
 
     var logros = []
@@ -495,7 +502,7 @@ function getValenciaLogros(lugaresVisitados){
 
     var visitasValencia= 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Valencia"){visitasValencia = visitasValencia + 1}
+        if(lugaresVisitados[i].ccaa == "Valencia"){visitasValencia = visitasValencia + 1}
     }
 
     var logros = []
@@ -521,7 +528,7 @@ function getMurciaLogros(lugaresVisitados){
 
     var visitasMurcia= 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Murcia"){visitasMurcia = visitasMurcia + 1}
+        if(lugaresVisitados[i].ccaa == "Murcia"){visitasMurcia = visitasMurcia + 1}
     }
 
     var logros = []
@@ -547,7 +554,7 @@ function getCastillaLaManchaLogros(lugaresVisitados){
 
     var visitasCastillaLaMancha= 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Castilla La Mancha"){visitasCastillaLaMancha = visitasCastillaLaMancha + 1}
+        if(lugaresVisitados[i].ccaa == "Castilla La Mancha"){visitasCastillaLaMancha = visitasCastillaLaMancha + 1}
     }
 
     var logros = []
@@ -573,7 +580,7 @@ function getExtremaduraLogros(lugaresVisitados){
 
     var visitasExtremadura= 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Extremadura"){visitasExtremadura = visitasExtremadura + 1}
+        if(lugaresVisitados[i].ccaa == "Extremadura"){visitasExtremadura = visitasExtremadura + 1}
     }
 
     var logros = []
@@ -599,7 +606,7 @@ function getAndaluciaLogros(lugaresVisitados){
 
     var visitasAndalucia= 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Andalucia"){visitasAndalucia = visitasAndalucia + 1}
+        if(lugaresVisitados[i].ccaa == "Andalucia"){visitasAndalucia = visitasAndalucia + 1}
     }
 
     var logros = []
@@ -625,7 +632,7 @@ function getCanariasLogros(lugaresVisitados){
 
     var visitasCanarias= 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Canarias"){visitasCanarias = visitasCanarias + 1}
+        if(lugaresVisitados[i].ccaa == "Canarias"){visitasCanarias = visitasCanarias + 1}
     }
 
     var logros = []
@@ -651,7 +658,7 @@ function getIslasBalearesLogros(lugaresVisitados){
 
     var visitasIslasBaleares= 0
     for(var i=0;i<lugaresVisitados.length;i++){
-        if(lugaresVisitados[i].CCAA == "Islas Baleares"){visitasIslasBaleares = visitasIslasBaleares + 1}
+        if(lugaresVisitados[i].ccaa == "Islas Baleares"){visitasIslasBaleares = visitasIslasBaleares + 1}
     }
 
     var logros = []

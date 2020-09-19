@@ -9,6 +9,7 @@ const getAllLogrosHelper = require('./Helpers/GetAllLogrosHelper');
 const askForLogrosHelper = require('./Helpers/AskForLogrosHelper');
 
 const mongoose = require('mongoose');
+const { response } = require('express');
 
 api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
 
@@ -35,7 +36,7 @@ api.post('/askForLogros', async(req,res) => {
 				const logroBienvenida = askForLogrosHelper.isFirstTimeInTheApp(usuario.logros);
 				if (logroBienvenida.length > 0){
 					var logrosObtenidos = []
-					const logro = await Logro.findOne({logroToken:logroBienvenida[0]});
+					const logro = await Logro.findOne({logroToken: logroBienvenida[0]});
 					logrosObtenidos.push(logro)
 					usuario.logros.push(logro.logroToken);
 					usuario.puntos = logro.puntos;
@@ -46,55 +47,45 @@ api.post('/askForLogros', async(req,res) => {
 				}else{
 					res.status(410).json({"reason":"no hay logros"})
 				}
+			} else {
+				const lugarEncontrado = await Lugar.findById(lugar);
+				const logrosLugares = askForLogrosHelper.lugarLogros(lugarEncontrado,usuario);
+				if(logrosLugares.length > 0){
+					var logrosADevolver = [];
+					var puntos = 0
+					var monedas = 0
+					var diamantes = 0
+					for(i==0;i<logrosLugares.length;i++){
+						if(usuario.lugares.count == 0 || logrosLugares[i] != "LV"){
+							usuario.logros.push(logrosLugares[i]);
+						}
+						const logroObtenido = await Logro.findOne({logroToken: logrosLugares[i]});
+						var logro = {
+							"_id": logroObtenido._id,
+							"titulo": logroObtenido.titulo,
+							"descripcion": logroObtenido.descripcion,
+							"imagen": logroObtenido.imagen,
+							"puntos": logroObtenido.puntos,
+							"monedas": logroObtenido.monedas,
+							"logroToken": logroObtenido.logroToken,
+							"diamantes": logroObtenido.diamantes,
+							"grupo": logroObtenido.grupo
+						}
+						logrosADevolver.push(logro);
+						puntos = puntos + logroObtenido.puntos;
+						monedas = monedas + logroObtenido.monedas;
+						diamantes = diamantes + logroObtenido.diamantes;
+					}
+					usuario.lugares.push(lugar);
+					usuario.puntos = usuario.puntos + puntos;
+					usuario.monedas = usuario.monedas + monedas;
+					usuario.diamantes = usuario.diamantes + diamantes;
+					const guardado = await usuario.save();
+					res.status(200).json(logrosADevolver);
+				} else {
+					res.status(410).json({"reason":"no hay logros"})
+				}
 			}
-
-
-			/*const lugar = await query("SELECT * FROM Lugar WHERE idLugar = ?", idLugar);
-			const visitas = await query("SELECT * FROM Visitas WHERE Usuario_idUsuario = ?", idUsuario);
-			const logrosUsuario = await query("SELECT * FROM LogrosUsuarios WHERE Usuario_idUsuario = ?", idUsuario);
-			
-			if (idLugar == -1) {//bienvenida
-				const logroBienvenida = askForLogrosHelper.isFirstTimeInTheApp(logrosUsuario);
-				if (logroBienvenida.length > 0){
-					console.log("Binevenido!!!");
-					const logros = await askForLogrosHelper.InsertNewLogro(['LB'],idUsuario);
-					console.log('Logros obtenidos: ', logros);
-					askForLogrosHelper.updatePremios(logros,idUsuario);
-					var data = {
-						"state":"OK",
-						"data":logros
-					}
-					res.json({data})
-				} else {
-					console.log('No se han obtenido logros para ',idLugar);
-					var data = {
-						"state":"Fail"
-					};
-					res.json({data});
-				}
-			} else if(idLugar == -2){//cambio de nivel
-
-			} else {//lugar visitado
-				const logrosLugares = askForLogrosHelper.lugarLogros(lugar[0],visitas,idUsuario);
-				if (logrosLugares.length > 0) {
-					askForLogrosHelper.InsertNewVisita(lugar,idUsuario);
-					const logros = await askForLogrosHelper.InsertNewLogro(logrosLugares,idUsuario);
-					askForLogrosHelper.updatePremios(logros,idUsuario);
-					var data = {
-						"state":"OK",
-						"data":logros
-					}
-					res.json({data})
-				} else {
-					console.log('No se han obtenido logros para ',idLugar);
-					var data = {
-						"state":"Fail"
-					};
-					res.json({data});
-				}
-			}*/
-
-
 		} catch(err){
 			console.log(err);
 			var data = {
