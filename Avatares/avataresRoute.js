@@ -31,14 +31,22 @@ api.post('/insertAvatar', (req,res) => {
         var nombre = req.body.nombre;
         var descripcion = req.body.descripcion;
         var categorias = req.body.categorias;
-        if(nombre == null || nombre == "" || descripcion == null || descripcion == "" || categorias == null || categorias == ""){
+        var precio = req.body.precio;
+        var nivel = req.body.nivel;
+        if(nombre == null || nombre == "" || descripcion == null || descripcion == "" || categorias == null || categorias == "" || precio == "" || precio == null || nivel == "" || nivel == null){
             res.status(400).json({"reason":"Faltan valores"});
         } else {
             const Avatar = mongoose.model('Avatar', dataBaseConfig.avatarSchema);
+            var categoriasArray = [];
+            for(var i=0;i<categorias.split("-").count;i++){
+                categoriasArray.push(categorias.split("-")[i]);
+            }
             const nuevoAvatar = new Avatar({
                 nombre: nombre,
                 descripcion: descripcion,
-                categorias: categorias
+                categorias: categoriasArray,
+                precio: precio,
+                nivel: nivel
             });
             nuevoAvatar.save().then(avatar =>{
                 res.status(200).json({avatar})

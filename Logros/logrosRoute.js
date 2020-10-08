@@ -137,6 +137,7 @@ api.post('/getAllLogros', async(req,res) => {
 				}
 				res.json(getAllLogrosHelper.divideIntoGroups(logrosConPorcentaje));
 			}catch(err){
+				console.log(err)
 				res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
 			}
 		}

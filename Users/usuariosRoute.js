@@ -74,4 +74,54 @@ api.post('/registrarUsuario', (req,res) => {
 	}
 });
 
+api.post('/comprarAvatar', async(req,res) => {
+	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
+		var nombre = req.body.nombre;
+		var idAvatar = req.body.avatar;
+		if(nombre == "" || nombre == null || idAvatar == "" || idAvatar == null){
+			res.status(400).json({"reason":"Faltan valores"});
+		} else {
+			try{
+				const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
+				const Avatar = mongoose.model('Avatar',databaseConfig.avatarSchema);
+	
+				const usuario = await Usuario.findOne({nombre: nombre});
+				const avatar = await Avatar.findById(idAvatar);
+	
+				usuario.avatares.push(idAvatar);
+				usuario.monedas = usuario.monedas - avatar.precio; 
+	
+				const guardado = await usuario.save();
+				res.status(200).json({});
+			} catch (err){
+				res.status(500).json({"reason":"Error interno, vuelva a intentarlo"});
+			};
+		}
+	} else {
+		res.status(401).json({"reason":"Unauthorized"});
+	}
+});
+
+api.post('/activarAvatar', async(req,res) => {
+	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
+		var nombre = req.body.nombre;
+		var idAvatar = req.body.avatar;
+		if(nombre == "" || nombre == null || idAvatar == "" || idAvatar == null){
+			res.status(400).json({"reason":"Faltan valores"});
+		} else {
+			const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
+
+			const usuario = await Usuario.findOne({nombre: nombre});
+
+			usuario.avatarActivo = idAvatar;
+			const guardado = await usuario.save();
+
+			res.status(200).json({});
+		}
+	} else {
+		res.status(401).json({"reason":"Unauthorized"});
+	}
+});
+
+
 module.exports = api;
