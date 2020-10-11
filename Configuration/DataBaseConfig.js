@@ -53,7 +53,7 @@ const lugarSchema = new mongoose.Schema({
 const avatarSchema = new mongoose.Schema({
 	nombre: String,
 	descripcion: String,
-	categorias: [String],
+	categorias: [{type:String}],
 	precio: Number,
 	nivel: Number
 });

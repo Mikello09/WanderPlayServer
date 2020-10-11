@@ -77,8 +77,8 @@ api.post('/registrarUsuario', (req,res) => {
 api.post('/comprarAvatar', async(req,res) => {
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
 		var nombre = req.body.nombre;
-		var idAvatar = req.body.avatar;
-		if(nombre == "" || nombre == null || idAvatar == "" || idAvatar == null){
+		var avatarNombre = req.body.avatar;
+		if(nombre == "" || nombre == null || avatarNombre == "" || avatarNombre == null){
 			res.status(400).json({"reason":"Faltan valores"});
 		} else {
 			try{
@@ -86,9 +86,9 @@ api.post('/comprarAvatar', async(req,res) => {
 				const Avatar = mongoose.model('Avatar',databaseConfig.avatarSchema);
 	
 				const usuario = await Usuario.findOne({nombre: nombre});
-				const avatar = await Avatar.findById(idAvatar);
+				const avatar = await Avatar.findOne({nombre: avatarNombre});
 	
-				usuario.avatares.push(idAvatar);
+				usuario.avatares.push(avatar.nombre);
 				usuario.monedas = usuario.monedas - avatar.precio; 
 	
 				const guardado = await usuario.save();
@@ -105,15 +105,15 @@ api.post('/comprarAvatar', async(req,res) => {
 api.post('/activarAvatar', async(req,res) => {
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
 		var nombre = req.body.nombre;
-		var idAvatar = req.body.avatar;
-		if(nombre == "" || nombre == null || idAvatar == "" || idAvatar == null){
+		var nombreAvatar = req.body.avatar;
+		if(nombre == "" || nombre == null || nombreAvatar == "" || nombreAvatar == null){
 			res.status(400).json({"reason":"Faltan valores"});
 		} else {
 			const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
 
 			const usuario = await Usuario.findOne({nombre: nombre});
 
-			usuario.avatarActivo = idAvatar;
+			usuario.avatarActivo = nombreAvatar;
 			const guardado = await usuario.save();
 
 			res.status(200).json({});

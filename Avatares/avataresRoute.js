@@ -38,8 +38,9 @@ api.post('/insertAvatar', (req,res) => {
         } else {
             const Avatar = mongoose.model('Avatar', dataBaseConfig.avatarSchema);
             var categoriasArray = [];
-            for(var i=0;i<categorias.split("-").count;i++){
-                categoriasArray.push(categorias.split("-")[i]);
+            for(var i=0;i<categorias.split('-').length;i++){
+                console.log(categorias.split('-')[i]);
+                categoriasArray.push(categorias.split('-')[i]);
             }
             const nuevoAvatar = new Avatar({
                 nombre: nombre,
