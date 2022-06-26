@@ -12,17 +12,24 @@ const { MongoNetworkError } = require('mongodb');
 api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
 
 api.post('/doLogin', (req,res) => {
+	console.log('DoLogin');
+	console.log(req.body);
 	var nombre = req.body.nombre;
 	var pass = req.body.contrasena;
 	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
+		console.log('DoLogin: Authenticated');
+		console.log(nombre);
+		console.log(pass);
 			const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
             Usuario.findOne({
                 nombre: nombre,
-                pass: pass
+                contrasena: pass
             }, function(err, usuario){  
                 if(usuario != null){
+					console.log('DoLogin: User found');
                     res.status(200).json({usuario});
                 } else {
+					console.log('DoLogin: User not found');
                     res.status(400).json({"reason":"Usuario/contraseña incorrectos"});
                 }
             })
