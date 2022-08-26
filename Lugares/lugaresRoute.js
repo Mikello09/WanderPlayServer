@@ -10,6 +10,7 @@ const XLSX = require('xlsx');
 const { lugarSchema } = require('../Configuration/DataBaseConfig');
 const mongoose = require('mongoose');
 
+api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
 
 api.post('/getAllLugares', (req,res) => {
 	console.log('calling getAllLugares...');
@@ -24,6 +25,48 @@ api.post('/getAllLugares', (req,res) => {
 		}) 
 	} else {
 		res.json({'status':'Unauthorized'});
+	}
+});
+
+api.post('/updateLugar', async(req,res) => {
+	console.log('Updating lugar');
+	if (proxy.isUserAuthenticated(req.headers['authtoken'])) {
+		var id = req.body.id;
+		var nombre = req.body.nombre;
+		var descripcion = req.body.descripcion;
+		var puntos = req.body.puntos;
+		var interes = req.body.interes;
+		var categoria = req.body.categoria;
+		var ccaa = req.body.ccaa;
+		var provincia = req.body.provincia;
+		var localidad = req.body.localidad;
+		var latitud = req.body.latitud;
+		var longitud = req.body.longitud;
+		var foto1 = req.body.foto1;
+		var foto2 = req.body.foto2;
+		var foto3 = req.body.foto3;
+
+		const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
+		const lugar = await Lugar.findById(id);
+		lugar.nombre = nombre;
+		lugar.descripcion = descripcion;
+		lugar.puntos = puntos;
+		lugar.interes = interes;
+		lugar.categoria = categoria;
+		lugar.ccaa = ccaa;
+		lugar.provincia = provincia;
+		lugar.localidad = localidad;
+		lugar.latitud = latitud;
+		lugar.longitud = longitud;
+		lugar.foto1 = foto1;
+		lugar.foto2 = foto2;
+		lugar.foto3 = foto3;
+
+		const guardado = await lugar.save();
+
+		res.status(200).json({});
+	} else {
+		res.status(401).send('Unauthorized');
 	}
 });
 
