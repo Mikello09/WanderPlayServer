@@ -1,0 +1,18 @@
+
+
+getLevel = function(puntos){
+    const baseLevel = 999;
+    const factor = 0.2;
+    var indexLevel = 1;
+    var level = 0;
+
+    while(level == 0) {
+        if (puntos < ((indexLevel*baseLevel) + ((indexLevel - 1)*baseLevel*factor))){
+            level = indexLevel;
+        }
+        indexLevel = indexLevel + 1;
+    }
+    return indexLevel;
+}
+
+module.exports = {getLevel};

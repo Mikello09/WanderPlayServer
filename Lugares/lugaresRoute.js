@@ -92,8 +92,7 @@ api.post('/insertLugaresFromExcell', async(req,res) => {
 			let foto1 = lugares[i]['URL_Foto_1'];
 			let foto2 = lugares[i]['URL_Foto_2'];
 			let foto3 = lugares[i]['URL_Foto_3'];
-			let interes = lugares[i]['Interes']
-
+			let interes = lugares[i]['Nivel']
 
 			const nuevoLugar = new Lugar({ 
 				nombre: nombre,
@@ -110,7 +109,7 @@ api.post('/insertLugaresFromExcell', async(req,res) => {
 				localidad: localidad,
 				interes: interes
 			});
-
+			console.log(nombre);
 			const guardado = await nuevoLugar.save()
 		}
 		res.status(200).json('success');

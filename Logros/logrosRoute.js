@@ -7,6 +7,7 @@ const databaseConfig = require('../Configuration/DataBaseConfig');
 const proxy = require('../Configuration/Proxy');
 const getAllLogrosHelper = require('./Helpers/GetAllLogrosHelper');
 const askForLogrosHelper = require('./Helpers/AskForLogrosHelper');
+const levelHelper = require('../Users/Helpers/LevelHelper');
 
 const mongoose = require('mongoose');
 const { response } = require('express');
@@ -19,80 +20,81 @@ api.post('/askForLogros', async(req,res) => {
 	console.log("Asking for logros...");
 	var nombre = req.body.nombre;
 	var lugar = req.body.lugar;
-	if(proxy.isUserAuthenticated(req.headers['authtoken'])){
-		if(nombre == "" || nombre == null || lugar == "" || lugar == null){
+	if(proxy.isUserAuthenticated(req.headers['authtoken'])) {
+		if(nombre == "" || nombre == null || lugar == "" || lugar == null) {
 			res.status(400).json({"reason":"Faltan valores"});
 		} else {
+			try{
 
-		}
-		try{
-
-			const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
-			const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
-			const Logro = mongoose.model('Logro', databaseConfig.logroSchema);
-
-			const usuario = await Usuario.findOne({nombre: nombre});
-			if (lugar == "-1"){
-				const logroBienvenida = askForLogrosHelper.isFirstTimeInTheApp(usuario.logros);
-				if (logroBienvenida.length > 0){
-					var logrosObtenidos = []
-					const logro = await Logro.findOne({logroToken: logroBienvenida[0]});
-					logrosObtenidos.push(logro)
-					usuario.logros.push(logro.logroToken);
-					usuario.puntos = logro.puntos;
-					usuario.monedas = logro.monedas;
-					usuario.diamantes = logro.diamantes;
-					const guardado = await usuario.save();
-					res.status(200).json({"logros":logrosObtenidos})
-				}else{
-					res.status(410).json({"reason":"no hay logros"})
-				}
-			} else {
-				const lugarEncontrado = await Lugar.findById(lugar);
-				const logrosLugares = askForLogrosHelper.lugarLogros(lugarEncontrado,usuario);
-				if(logrosLugares.length > 0){
-					var logrosADevolver = [];
-					var puntos = 0
-					var monedas = 0
-					var diamantes = 0
-					for(i==0;i<logrosLugares.length;i++){
-						if(usuario.lugares.count == 0 || logrosLugares[i] != "LV"){
-							usuario.logros.push(logrosLugares[i]);
-						}
-						const logroObtenido = await Logro.findOne({logroToken: logrosLugares[i]});
-						var logro = {
-							"_id": logroObtenido._id,
-							"titulo": logroObtenido.titulo,
-							"descripcion": logroObtenido.descripcion,
-							"imagen": logroObtenido.imagen,
-							"puntos": logroObtenido.puntos,
-							"monedas": logroObtenido.monedas,
-							"logroToken": logroObtenido.logroToken,
-							"diamantes": logroObtenido.diamantes,
-							"grupo": logroObtenido.grupo
-						}
-						logrosADevolver.push(logro);
-						puntos = puntos + logroObtenido.puntos;
-						monedas = monedas + logroObtenido.monedas;
-						diamantes = diamantes + logroObtenido.diamantes;
+				const Usuario = mongoose.model('Usuario', databaseConfig.usuarioSchema);
+				const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
+				const Logro = mongoose.model('Logro', databaseConfig.logroSchema);
+	
+				const usuario = await Usuario.findOne({nombre: nombre});
+				if (lugar == "-1") {
+					const logroBienvenida = askForLogrosHelper.isFirstTimeInTheApp(usuario.logros);
+					if (logroBienvenida.length > 0) {
+						var logrosObtenidos = []
+						const logro = await Logro.findOne({logroToken: logroBienvenida[0]});
+						logrosObtenidos.push(logro)
+						usuario.logros.push(logro.logroToken);
+						usuario.puntos = logro.puntos;
+						usuario.nivel = levelHelper.getNivel(usuario.puntos);
+						usuario.monedas = logro.monedas;
+						usuario.diamantes = logro.diamantes;
+						const guardado = await usuario.save();
+						res.status(200).json({"logros":logrosObtenidos})
+					}else {
+						res.status(410).json({"reason":"no hay logros"})
 					}
-					usuario.lugares.push(lugar);
-					usuario.puntos = usuario.puntos + puntos;
-					usuario.monedas = usuario.monedas + monedas;
-					usuario.diamantes = usuario.diamantes + diamantes;
-					const guardado = await usuario.save();
-					res.status(200).json({"logros":logrosADevolver});
 				} else {
-					res.status(410).json({"reason":"no hay logros"})
+					const lugarEncontrado = await Lugar.findById(lugar);
+					const logrosLugares = askForLogrosHelper.lugarLogros(lugarEncontrado,usuario);
+					if(logrosLugares.length > 0){
+						var logrosADevolver = [];
+						var puntos = 0
+						var monedas = 0
+						var diamantes = 0
+						for(i==0;i<logrosLugares.length;i++){
+							if(usuario.lugares.count == 0 || logrosLugares[i] != "LV"){
+								usuario.logros.push(logrosLugares[i]);
+							}
+							const logroObtenido = await Logro.findOne({logroToken: logrosLugares[i]});
+							var logro = {
+								"_id": logroObtenido._id,
+								"titulo": logroObtenido.titulo,
+								"descripcion": logroObtenido.descripcion,
+								"imagen": logroObtenido.imagen,
+								"puntos": logroObtenido.puntos,
+								"monedas": logroObtenido.monedas,
+								"logroToken": logroObtenido.logroToken,
+								"diamantes": logroObtenido.diamantes,
+								"grupo": logroObtenido.grupo
+							}
+							logrosADevolver.push(logro);
+							puntos = puntos + logroObtenido.puntos;
+							monedas = monedas + logroObtenido.monedas;
+							diamantes = diamantes + logroObtenido.diamantes;
+						}
+						usuario.lugares.push(lugar);
+						usuario.puntos = usuario.puntos + puntos;
+						usuario.nilvel = levelHelper.getNivel(usuario.puntos);
+						usuario.monedas = usuario.monedas + monedas;
+						usuario.diamantes = usuario.diamantes + diamantes;
+						const guardado = await usuario.save();
+						res.status(200).json({"logros":logrosADevolver});
+					} else {
+						res.status(410).json({"reason":"no hay logros"})
+					}
 				}
+			} catch(err){
+				console.log(err);
+				var data = {
+					"state":"SQLError",
+					"reason":err
+				};
+				res.json({data});
 			}
-		} catch(err){
-			console.log(err);
-			var data = {
-				"state":"SQLError",
-				"reason":err
-			};
-			res.json({data});
 		}
 	} else {
 		res.json({"state":"Unauthorized"});

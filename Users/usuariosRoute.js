@@ -24,8 +24,8 @@ api.post('/doLogin', (req,res) => {
             Usuario.findOne({
                 nombre: nombre,
                 contrasena: pass
-            }, function(err, usuario){  
-                if(usuario != null){
+            }, function(err, usuario) { 
+                if(usuario != null) {
 					console.log('DoLogin: User found');
                     res.status(200).json({usuario});
                 } else {
@@ -61,6 +61,7 @@ api.post('/registrarUsuario', (req,res) => {
 				ciudad: "",
 				edad: 0,
 				puntos: 0,
+				nivel: 1,
 				contrasena: pass,
 				ultimoIngreso: "",
 				version: "",

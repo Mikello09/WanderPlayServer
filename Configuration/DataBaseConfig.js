@@ -23,6 +23,7 @@ const usuarioSchema = new mongoose.Schema({
 	ciudad: String,
 	edad: Number,
 	puntos: Number,
+	nivel: Number,
 	contrasena: String,
 	ultimoIngreso: String,
 	version: String,
