@@ -16,6 +16,7 @@ app
 .use('/lugares/', lugares)
 .use('/logros/', logros)
 .use('/avatares/',avatares)
+.use(express.static(__dirname + '/Resources'))
 
 module.exports = app;
 
