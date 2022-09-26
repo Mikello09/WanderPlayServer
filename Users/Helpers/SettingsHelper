@@ -1,0 +1,9 @@
+const fs = require('fs');
+
+getSettings = function(){
+    const settings = fs.readFileSync('Users/Helpers/settings.json');
+    const settingsJSON = JSON.parse(settings);
+    return settingsJSON;
+}
+
+module.exports = {getSettings};

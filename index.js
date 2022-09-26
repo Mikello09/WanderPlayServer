@@ -15,12 +15,9 @@ server.listen(PORT,listeningMask, () => {
 	console.log('listening to server');
 });
 
-var file = new nodeStatic.Server('./Resources/Categorias');
+var file = new nodeStatic.Server('./Resources');
 require('http').createServer(function (request, response) {
     request.addListener('end', function () {
-        //
-        // Serve files!
-        //
         file.serve(request, response);
     }).resume();
 }).listen(8080);

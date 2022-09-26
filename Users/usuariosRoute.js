@@ -8,6 +8,7 @@ const proxy = require('../Configuration/Proxy');
 const mongo = require('mongodb').MongoClient;
 const mongoose = require('mongoose');
 const { MongoNetworkError } = require('mongodb');
+const settings = require('../Users/Helpers/SettingsHelper');
 
 api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
 
@@ -27,7 +28,15 @@ api.post('/doLogin', (req,res) => {
             }, function(err, usuario) { 
                 if(usuario != null) {
 					console.log('DoLogin: User found');
-                    res.status(200).json({usuario});
+					
+					let loginSettings = settings.getSettings();
+
+					const login = {
+						settings: loginSettings,
+						usuario: usuario
+					}
+					console.log(login);
+                    res.status(200).json({settings: loginSettings, usuario: usuario});
                 } else {
 					console.log('DoLogin: User not found');
                     res.status(400).json({"reason":"Usuario/contraseña incorrectos"});

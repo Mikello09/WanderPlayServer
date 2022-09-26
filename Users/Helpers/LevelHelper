@@ -1,5 +1,4 @@
 
-
 getLevel = function(puntos){
     const baseLevel = 999;
     const factor = 0.2;

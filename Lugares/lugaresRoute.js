@@ -9,6 +9,7 @@ const proxy = require('../Configuration/Proxy');
 const XLSX = require('xlsx');
 const { lugarSchema } = require('../Configuration/DataBaseConfig');
 const mongoose = require('mongoose');
+const fs = require('fs');
 
 api.use(bodyParser.urlencoded({extended: false}))//necesario para parsear las respuestas en el body
 
@@ -23,6 +24,30 @@ api.post('/getAllLugares', (req,res) => {
 		.catch(err => {
 			res.status(500).json({"reason":"Error interno. Vuelva a intentarlo"})
 		}) 
+	} else {
+		res.json({'status':'Unauthorized'});
+	}
+});
+
+api.post('/createLugaresJSON', (req, res) => {
+	console.log('Creating lugares JSON...');
+	if (proxy.isUserAuthenticated(req.headers['authtoken'])) {
+		const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
+		Lugar.find()
+		.then(lugares => {
+			const lugaresString = JSON.stringify(lugares);
+			const settings = {
+				lugaresCreateDate: new Date()
+			};
+			const dateString = JSON.stringify(settings);
+			fs.writeFileSync('./Resources/Lugares.json', lugaresString);
+			fs.writeFileSync("./Users/Helpers/settings.json", dateString);
+			res.status(200).json({});
+		})
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({"reason":"Error interno. Vuelva a intentarlo"});
+		})
 	} else {
 		res.json({'status':'Unauthorized'});
 	}
