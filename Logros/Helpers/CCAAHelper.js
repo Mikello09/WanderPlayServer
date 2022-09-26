@@ -144,6 +144,7 @@ const islasBaleares = [
 module.exports.getCCAALogros = getCCAALogros;
 async function getCCAALogros(usuario,lugar){
     var logrosCategorias = []
+    var lugaresVisitados = []
     var query = ""
     for(i=0;i<usuario.lugares;i++){
         query = query.concat(query,"{");
@@ -156,7 +157,7 @@ async function getCCAALogros(usuario,lugar){
     }
     if (query != ""){
         const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
-        const lugaresVisitados = await Lugar.find({$or: [
+        lugaresVisitados = await Lugar.find({$or: [
             query
           ]})
     }

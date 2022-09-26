@@ -135,6 +135,7 @@ const playas = [
 module.exports.getCategoriasLogros = getCategoriasLogros;
 async function getCategoriasLogros(usuario,lugar){
     var query = ""
+    var logrosCategorias = []
     var lugaresVisitados = []
     for(i=0;i<usuario.lugares;i++){
         query = query.concat(query,"{");
@@ -147,12 +148,11 @@ async function getCategoriasLogros(usuario,lugar){
     }
     if(query != ""){
         const Lugar = mongoose.model('Lugar', databaseConfig.lugarSchema);
-        const lugaresVisitados = await Lugar.find({$or: [
+        lugaresVisitados = await Lugar.find({$or: [
         query
       ]})
     }
     
-    var logrosCategorias = []
     switch(lugar.categoria){
         case "Castillos y Palacios":
             const logrosCastillosyPalacios = await getCastillosyPalaciosLogro(lugaresVisitados);
