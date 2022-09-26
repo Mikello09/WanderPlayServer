@@ -28,15 +28,17 @@ api.post('/doLogin', (req,res) => {
             }, function(err, usuario) { 
                 if(usuario != null) {
 					console.log('DoLogin: User found');
-					
 					let loginSettings = settings.getSettings();
-
 					const login = {
 						settings: loginSettings,
-						usuario: usuario
+						usuario: loginUser
 					}
 					console.log(login);
                     res.status(200).json({settings: loginSettings, usuario: usuario});
+					var loginUser = usuario;
+					loginUser.ultimoIngreso = new Date();
+					loginUser.save();
+					console.log('Ultimo ingreso saved');
                 } else {
 					console.log('DoLogin: User not found');
                     res.status(400).json({"reason":"Usuario/contraseña incorrectos"});
@@ -72,7 +74,7 @@ api.post('/registrarUsuario', (req,res) => {
 				puntos: 0,
 				nivel: 1,
 				contrasena: pass,
-				ultimoIngreso: "",
+				ultimoIngreso: new Date(),
 				version: "",
 				monedas: 0,
 				diamantes: 0,

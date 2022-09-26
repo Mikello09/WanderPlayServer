@@ -25,7 +25,7 @@ const usuarioSchema = new mongoose.Schema({
 	puntos: Number,
 	nivel: Number,
 	contrasena: String,
-	ultimoIngreso: String,
+	ultimoIngreso: Date,
 	version: String,
 	monedas: Number,
 	diamantes: Number,
